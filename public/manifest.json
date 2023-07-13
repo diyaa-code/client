@@ -1,0 +1,11 @@
+{
+  "short_name": "Taacland",
+  "name": "Taacland",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "96x96 128x128 256x256",
+      "type": "image/x-icon"
+    }
+  ]
+}
