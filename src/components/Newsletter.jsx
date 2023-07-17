@@ -4,7 +4,7 @@ import { mobile } from "../responsive";
 import React, { useRef, useState } from "react";
 import emailjs from "@emailjs/browser";
 import { useNavigate } from "react-router-dom";
-
+import validator from "validator";
 const Container = styled.div`
   height: 60vh;
   background-color: #fcf5f5;
@@ -66,33 +66,46 @@ const Button = styled.button`
   color: white;
   cursor: pointer;
 `;
-
+const Error = styled.span`
+  color: red;
+`;
 const Newsletter = () => {
   const form = useRef();
   const [subscrib, setSubscrib] = useState(true);
   const history = useNavigate();
   const [newstEmail, setNewstEmail] = useState("");
+  // const sendEmail = (e) => {
+  //   e.preventDefault();
+
+  //   emailjs
+  //     .sendForm(
+  //       "service_65ed8dd",
+  //       "template_9245ciz",
+  //       form.current,
+  //       "Part4zi-OT2Jh0TKt"
+  //     )
+  //     .then(
+  //       (result) => {
+  //         console.log(result.text);
+  //       },
+  //       (error) => {
+  //         console.log(error.text);
+  //       }
+  //     );
+  //   e.target.reset();
+  // };
   const sendEmail = (e) => {
     e.preventDefault();
 
-    emailjs
-      .sendForm(
-        "service_65ed8dd",
-        "template_9245ciz",
-        form.current,
-        "Part4zi-OT2Jh0TKt"
-      )
-      .then(
-        (result) => {
-          console.log(result.text);
-        },
-        (error) => {
-          console.log(error.text);
-        }
-      );
-    e.target.reset();
+    if (!validator.isEmail(newstEmail)) {
+      document.getElementById("emailErrValid").innerHTML =
+        "Please, enter valid Email...";
+    } else {
+      setSubscrib(false);
+      document.getElementById("emailValid").innerHTML =
+        "Thanks for Subscribing! We'll be in touch shortly.";
+    }
   };
-
   return (
     <Container>
       <Title>SIGN UP TO OUR NEWSLETTER</Title>
@@ -104,7 +117,7 @@ const Newsletter = () => {
         offers? Sign up with your email here to keep in touch!
       </Subs>
 
-      {subscrib ? (
+      {subscrib && (
         <>
           <InputContainer>
             <Input
@@ -112,20 +125,19 @@ const Newsletter = () => {
               onChange={(e) => setNewstEmail(e.target.value)}
             />
             <Button
-              onClick={() => {
+              onClick={
                 //history("/register", { state: { email: newstEmail } });
-                setSubscrib(false);
-              }}
+                sendEmail
+              }
             >
               <Send />
             </Button>
           </InputContainer>
+          <Error id="emailErrValid"></Error>
         </>
-      ) : (
-        <SubsThanks>
-          Thanks for Subscribing! We'll be in touch shortly.
-        </SubsThanks>
       )}
+      <SubsThanks id="emailValid"></SubsThanks>
+
       {/* <form ref={form} onSubmit={sendEmail}>
         <label>Name</label>
         <input type="text" name="user_name" />

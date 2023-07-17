@@ -141,7 +141,7 @@ const Slider = () => {
       try {
         // const res = await axios.get(`http://localhost:5000/api/sliders`);
         const res = await axios.get(
-          `https://taaclandapi.onrender.com/api/sliders`
+          `https://nice-plum-swallow-fez.cyclic.app/api/sliders`
         );
         setSliders(res.data);
       } catch (err) {}

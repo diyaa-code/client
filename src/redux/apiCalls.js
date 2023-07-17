@@ -28,7 +28,8 @@ export const register = async (dispatch, user) => {
     // console.log("apiCalls", res.data);
     dispatch(registerSuccess(res.data));
   } catch (err) {
-    dispatch(registerFailure());
+    dispatch(registerFailure(err.response.data.keyValue));
+    
   }
 };
 

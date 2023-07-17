@@ -12,6 +12,8 @@ import { publicRequest, userRequest } from "../requestMethods";
 import { addProduct } from "../redux/cartRedux";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import CreatableSelect from "react-select";
+import chroma from "chroma-js";
 
 const Container = styled.div``;
 
@@ -47,33 +49,28 @@ const Price = styled.span`
 const FilterContainer = styled.div`
   width: 50%;
   margin: 30px 0px;
-  display: flex;
-  justify-content: space-between;
   ${mobile({ width: "100%" })}
 `;
 
 const Filter = styled.div`
   display: flex;
   align-items: center;
+
+  margin: 20px 0px;
 `;
 
 const FilterTitle = styled.span`
   font-size: 20px;
   font-weight: 200;
+  margin-right: 10px;
 `;
 
-const FilterColor = styled.div`
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: ${(props) => props.color};
-  margin: 0px 5px;
-  cursor: pointer;
+const StylesColor = styled.div`
+  width: 200px;
 `;
 
-const FilterSize = styled.select`
-  margin-left: 10px;
-  padding: 5px;
+const StylesSize = styled.div`
+  width: 200px;
 `;
 
 const FilterSizeOption = styled.option``;
@@ -106,12 +103,14 @@ const Amount = styled.span`
 const Button = styled.button`
   padding: 15px;
   border: 2px solid teal;
-  background-color: white;
+  color: #fff;
+  background-color: teal;
   cursor: pointer;
-  font-weight: 500;
+  font-weight: 600;
 
   &:hover {
     background-color: #f8f4f4;
+    color: black;
   }
 `;
 
@@ -177,6 +176,7 @@ const Product = () => {
   const [count, setcount] = useState(0);
   const [color, setColor] = useState("");
   const [size, setSize] = useState("");
+
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.currentUser);
 
@@ -220,7 +220,7 @@ const Product = () => {
     }
   };
 
-  const handleClick = async (e) => {
+  const handleClick = (e) => {
     e.preventDefault();
     dispatch(addProduct({ ...product, quantity, color, size }));
     setcount(count + 1);
@@ -266,6 +266,77 @@ const Product = () => {
   //   addProductCartBD();
   // }, [count]);
 
+  const dot = (color = "transparent") => ({
+    alignItems: "center",
+    display: "flex",
+
+    ":before": {
+      backgroundColor: color,
+      borderRadius: 10,
+      content: '" "',
+      display: "block",
+      marginRight: 8,
+      height: 10,
+      width: 10,
+    },
+  });
+  const optionsColor = product.color?.map((c) => ({
+    value: c,
+    label: c,
+    color: c,
+  }));
+  const optionsSize = product.size?.map((c) => ({
+    value: c,
+    label: c,
+  }));
+  const colorStyles = {
+    control: (styles) => ({
+      ...styles,
+      backgroundColor: "white",
+      borderColor: "teal",
+    }),
+    option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+      let color = chroma("teal");
+
+      return {
+        ...styles,
+        backgroundColor: isDisabled
+          ? undefined
+          : isSelected
+          ? data.color
+          : isFocused
+          ? color.alpha(0.1).css()
+          : undefined,
+        color: isDisabled
+          ? "#ccc"
+          : isSelected
+          ? chroma.contrast(color, "white") > 2
+            ? "white"
+            : "black"
+          : data.color,
+        cursor: isDisabled ? "not-allowed" : "default",
+
+        ":active": {
+          ...styles[":active"],
+          backgroundColor: !isDisabled
+            ? isSelected
+              ? data.color
+              : color.alpha(0.3).css()
+            : undefined,
+        },
+      };
+    },
+    input: (styles) => ({ ...styles, ...dot() }),
+    placeholder: (styles) => ({ ...styles, ...dot("#ccc") }),
+    singleValue: (styles, { data }) => ({ ...styles, ...dot(data.color) }),
+  };
+  const colorStylesSize = {
+    control: (styles) => ({
+      ...styles,
+      backgroundColor: "white",
+      borderColor: "teal",
+    }),
+  };
   var imgs = product.imgs ? product.imgs : 1;
   return (
     <Container>
@@ -307,17 +378,28 @@ const Product = () => {
           <FilterContainer>
             <Filter>
               <FilterTitle>Color</FilterTitle>
-              {product.color?.map((c) => (
-                <FilterColor color={c} key={c} onClick={() => setColor(c)} />
-              ))}
+              <StylesColor>
+                <CreatableSelect
+                  options={optionsColor}
+                  styles={colorStyles}
+                  onChange={(selectedOption, actionMeta) => {
+                    setColor(selectedOption.value);
+                  }}
+                />
+              </StylesColor>
             </Filter>
+
             <Filter>
               <FilterTitle>Size</FilterTitle>
-              <FilterSize onChange={(e) => setSize(e.target.value)}>
-                {product.size?.map((s) => (
-                  <FilterSizeOption key={s}>{s} </FilterSizeOption>
-                ))}
-              </FilterSize>
+              <StylesSize>
+                <CreatableSelect
+                  options={optionsSize}
+                  styles={colorStylesSize}
+                  onChange={(selectedOption, actionMeta) => {
+                    setSize(selectedOption.value);
+                  }}
+                />
+              </StylesSize>
             </Filter>
           </FilterContainer>
           <AddContainer>

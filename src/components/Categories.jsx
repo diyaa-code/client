@@ -19,10 +19,12 @@ const Categories = () => {
   useEffect(() => {
     const getCategory = async () => {
       try {
-        // const res = await axios.get(`http://localhost:5000/api/categories`);
         const res = await axios.get(
-          `https://taaclandapi.onrender.com/api/categories`
+          `https://nice-plum-swallow-fez.cyclic.app/api/categories`
         );
+        // const res = await axios.get(
+        //   `https://taaclandapi.onrender.com/api/categories`
+        // );
         setCategories(res.data);
       } catch (err) {}
     };

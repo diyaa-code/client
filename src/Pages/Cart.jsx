@@ -89,12 +89,15 @@ const ProductId = styled.span``;
 const ProductColor = styled.div`
   width: 20px;
   height: 20px;
+  margin-left: 5px;
   border-radius: 50%;
   background-color: ${(props) => props.color};
 `;
 
 const ProductSize = styled.span``;
-
+const ProductColorSpan = styled.span`
+  display: flex;
+`;
 const PriceDetail = styled.div`
   flex: 1;
   display: flex;
@@ -161,10 +164,10 @@ const Button = styled.button`
 
 const Cart = () => {
   const KEY = process.env.REACT_APP_PUB_KEY_STRIPE;
-  console.log("KEY", KEY);
+
   //console.log("good====", process.env.REACT_APP_MY_ENVIRONMENT_VARIABLE);
   const cart = useSelector((state) => state.cart);
-  console.log("cart", cart);
+
   const [stripeToken, setStripeToken] = useState(null);
   const history = useNavigate();
   const user = useSelector((state) => state.user.currentUser);
@@ -254,15 +257,26 @@ const Cart = () => {
           <TopTexts>
             <TopText>Shopping Bag({products.length})</TopText>
             {/* <TopText>Your Wishlist (0)</TopText> */}
-          </TopTexts>
-          <TopButton type="filled">CHECKOUT NOW</TopButton>
+          </TopTexts>{" "}
+          <StripeCheckout
+            name="TAACLAND"
+            image={imga}
+            billingAddress
+            shippingAddress
+            description={`Your total is $${cart.total}`}
+            amount={cart.total * 100}
+            token={onToken}
+            stripeKey={KEY}
+          >
+            <Button>CHECKOUT NOW</Button>
+          </StripeCheckout>
         </Top>
         <Bottom>
           <Info>
             {
               // arrProducts
-              products.map((product) => (
-                <Product /*key={product.id}*/>
+              products.map((product, index) => (
+                <Product key={index}>
                   <ProductDetail>
                     <Image src={product.imgs[0].img} />
                     <Details>
@@ -272,9 +286,12 @@ const Cart = () => {
                       {/*<ProductId>
                       <b>ID:</b> {product._id}
             </ProductId>*/}
-                      <ProductColor color={product.color} />
+                      <ProductColorSpan>
+                        <b>Color: </b> <ProductColor color={product.color} />
+                      </ProductColorSpan>
                       <ProductSize>
-                        <b>Size:</b>{" "}
+                        <b>Size:</b>
+
                         {product.size ? product.size : <p>you didn't chois</p>}
                       </ProductSize>
                     </Details>

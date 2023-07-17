@@ -15,6 +15,7 @@ import {
   PersonOutlineOutlined,
 } from "@material-ui/icons";
 import { logOut } from "../redux/apiCalls";
+
 import { useDispatch, useSelector } from "react-redux";
 
 const Image = styled.img`
@@ -90,7 +91,7 @@ function Navbar() {
                 <>
                   <li className="nav-item">
                     <NavLink
-                      to="/register"
+                      to="/login"
                       className={({ isActive }) =>
                         "nav-links" + (isActive ? " activated" : "")
                       }

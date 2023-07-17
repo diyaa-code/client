@@ -8,6 +8,7 @@ import Newsletter from "../components/Newsletter";
 import { register } from "../redux/apiCalls";
 import { mobile } from "../responsive";
 import { useLocation } from "react-router-dom";
+import validator from "validator";
 
 const Container = styled.div``;
 const ComponentDiv = styled.div`
@@ -63,19 +64,43 @@ const Button = styled.button`
   background-color: teal;
   color: white;
   cursor: pointer;
-`;
 
+  &:disabled {
+    color: green;
+    cursor: not-allowed;
+  }
+`;
+const Error = styled.span`
+  color: red;
+`;
 const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const dispatch = useDispatch();
-  const { isFetching, error } = useSelector((state) => state.register);
+  const { isFetching, error, errData } = useSelector((state) => state.register);
+  // console.log("errData", errData);
   // const location = useLocation();
-
+  const regexPattern = /^[a-zA-Z0-9]\w{3,25}$/;
   const handleClick = (e) => {
     e.preventDefault();
-    register(dispatch, { username, email, password });
+
+    if (!username) {
+      document.getElementById("nameErr").innerHTML = "Enter your username...";
+    } else if (!email) {
+      document.getElementById("emailErr").innerHTML = "Enter your email...";
+    } else if (!password) {
+      document.getElementById("passwordErr").innerHTML =
+        "Enter your password...";
+    } else if (!regexPattern.test(username)) {
+      document.getElementById("nameErr").innerHTML =
+        "Username must be between 3 and 25 characters....";
+    } else if (!validator.isEmail(email)) {
+      document.getElementById("emailErrValid").innerHTML =
+        "Please, enter valid Email...";
+    } else {
+      register(dispatch, { username, email, password });
+    }
   };
 
   return (
@@ -90,16 +115,22 @@ const Register = () => {
               placeholder="username"
               onChange={(e) => setUsername(e.target.value)}
             />
+            {(!username || !regexPattern.test(username)) && (
+              <Error id="nameErr"></Error>
+            )}
             <Input
               placeholder="email"
               // value={location.state ? location.state.email : ""}
               onChange={(e) => setEmail(e.target.value)}
             />
+            {!email && <Error id="emailErr"></Error>}
+            {!validator.isEmail(email) && <Error id="emailErrValid"></Error>}
             <Input
               //type="password"
               placeholder="password"
               onChange={(e) => setPassword(e.target.value)}
             />
+            {!password && <Error id="passwordErr"></Error>}
             <Input type="password" placeholder="confirm password" />
             <Agreement>
               By creating an account, I consent to the processing of my personal
@@ -108,6 +139,12 @@ const Register = () => {
             <Button onClick={handleClick} disabled={isFetching}>
               CREATE
             </Button>
+            {error && (
+              <Error>
+                {" "}
+                {errData.username || errData.email} already exists ...
+              </Error>
+            )}
           </Form>
         </Wrapper>
       </ComponentDiv>
@@ -115,10 +152,6 @@ const Register = () => {
       <Footer />
     </Container>
   );
-
-  function newFunction() {
-    console.log();
-  }
 };
 
 export default Register;

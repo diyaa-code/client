@@ -20,9 +20,9 @@ const Products = ({ cat, filters, sort }) => {
       try {
         const res = await axios.get(
           cat
-            ? `https://taaclandapi.onrender.com/api/products?category=${cat}`
+            ? `https://nice-plum-swallow-fez.cyclic.app/api/products?category=${cat}`
             : //  "http://localhost:5000/api/products"
-              "https://taaclandapi.onrender.com/api/products?new=true"
+              "https://nice-plum-swallow-fez.cyclic.app/api/products?new=true"
         );
         setProducts(res.data);
       } catch (err) {}
@@ -45,10 +45,8 @@ const Products = ({ cat, filters, sort }) => {
     if (sort === "newest") {
       setFilteredProducts(
         products
-        // (prev) =>[...prev].sort((a, b) => a.createdAt - b.createdAt)
+        // (prev) => [...prev].sort((a, b) => a.createdAt - b.createdAt)
       );
-      // console.log("filteredProducts[0]", filteredProducts[0]);
-      // console.log("filteredProducts", filteredProducts[5].createdAt);
     } else if (sort === "asc") {
       setFilteredProducts((prev) =>
         [...prev].sort((a, b) => a.price - b.price)
@@ -65,7 +63,7 @@ const Products = ({ cat, filters, sort }) => {
       {cat
         ? filteredProducts.map((item) => <Product item={item} key={item._id} />)
         : products
-            .slice(0, 8)
+            .slice(0, 12)
             .map((item) => <Product item={item} key={item._id} />)}
     </Container>
   );

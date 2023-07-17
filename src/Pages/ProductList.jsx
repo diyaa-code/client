@@ -58,7 +58,7 @@ const ProductList = () => {
       });
     }
   };
-  console.log("filters", filters);
+
   // console.log(sort);
   return (
     <>

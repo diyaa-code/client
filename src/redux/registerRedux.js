@@ -4,6 +4,7 @@ const registerRedux = createSlice({
   name: "register",
   initialState: {
     currentUser: null,
+    errData: null,
     isFetching: false,
     error: false,
   },
@@ -15,9 +16,10 @@ const registerRedux = createSlice({
       state.isFetching = false;
       state.currentUser = action.payload;
     },
-    registerFailure: (state) => {
+    registerFailure: (state , action) => {
       state.isFetching = false;
       state.error = true;
+      state.errData = action.payload;
     },
   },
 });
