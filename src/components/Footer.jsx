@@ -109,9 +109,9 @@ const Footer = () => {
         {/* <Logo>TAACLAND.</Logo> */}
         <Image src={logg} />
         <Desc>
-          There are many variations of passages of Lorem Ipsum available, but
-          the majority have suffered alteration in some form, by injected
-          humour, or randomised words which don’t look even slightly believable.
+          Designer Satış noktalarımız 📍The Land of Legends 📍Marriott Hotel
+          Boulevard ✂️Atölye Adres:Kadriye mah.Süleyman demirel cad. No9/3 iç
+          kapı No:5 Belek/Antalya
         </Desc>
         <SocialContainer>
           {/* <SocialIcon color="3B5999">

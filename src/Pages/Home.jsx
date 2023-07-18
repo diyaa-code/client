@@ -11,12 +11,13 @@ const Home = () => {
   return (
     <div>
       <Helmet>
+        <title>Taacland</title>
         <meta
           name="description"
-          content="A store of the finest headbands for adults, teenagers, and young children"
+          content="Taacland A store of the finest headbands for adults, teenagers, and young children"
         />
       </Helmet>
-      <Announcement />
+      {/* <Announcement /> */}
       <Navbar />
       <Slider />
       <Categories />

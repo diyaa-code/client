@@ -5,7 +5,7 @@ import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import Newsletter from "../components/Newsletter";
-import { register } from "../redux/apiCalls";
+import { login, register } from "../redux/apiCalls";
 import { mobile } from "../responsive";
 import { useLocation } from "react-router-dom";
 import validator from "validator";
@@ -76,12 +76,13 @@ const Error = styled.span`
 const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConf, setPasswordConf] = useState("");
   const [email, setEmail] = useState("");
   const dispatch = useDispatch();
   const { isFetching, error, errData } = useSelector((state) => state.register);
   // console.log("errData", errData);
   // const location = useLocation();
-  const regexPattern = /^[a-zA-Z0-9]\w{3,25}$/;
+  const regexPattern = /^[a-zA-Z0-9_]\w{3,25}$/;
   const handleClick = (e) => {
     e.preventDefault();
 
@@ -98,8 +99,23 @@ const Register = () => {
     } else if (!validator.isEmail(email)) {
       document.getElementById("emailErrValid").innerHTML =
         "Please, enter valid Email...";
+    } else if (
+      !validator.isStrongPassword(password, {
+        minLength: 8,
+        minLowercase: 0,
+        minUppercase: 0,
+        minNumbers: 1,
+        minSymbols: 0,
+      })
+    ) {
+      document.getElementById("passwordErr").innerHTML =
+        "Passwords must be eight characters long, and include at least one number...";
+    } else if (!(passwordConf === password)) {
+      document.getElementById("passwordErrConfirm").innerHTML =
+        "Password does not match ...";
     } else {
       register(dispatch, { username, email, password });
+      login(dispatch, { username, password });
     }
   };
 
@@ -126,12 +142,26 @@ const Register = () => {
             {!email && <Error id="emailErr"></Error>}
             {!validator.isEmail(email) && <Error id="emailErrValid"></Error>}
             <Input
-              //type="password"
+              type="password"
               placeholder="password"
               onChange={(e) => setPassword(e.target.value)}
             />
-            {!password && <Error id="passwordErr"></Error>}
-            <Input type="password" placeholder="confirm password" />
+            {(!password ||
+              !validator.isStrongPassword(password, {
+                minLength: 8,
+                minLowercase: 0,
+                minUppercase: 0,
+                minNumbers: 1,
+                minSymbols: 0,
+              })) && <Error id="passwordErr"></Error>}
+            <Input
+              type="password"
+              placeholder="confirm password"
+              onChange={(e) => setPasswordConf(e.target.value)}
+            />
+            {!(passwordConf === password) && (
+              <Error id="passwordErrConfirm"></Error>
+            )}
             <Agreement>
               By creating an account, I consent to the processing of my personal
               data in accordance with the <b>PRIVACY POLICY</b>
@@ -142,7 +172,7 @@ const Register = () => {
             {error && (
               <Error>
                 {" "}
-                {errData.username || errData.email} already exists ...
+                {errData?.username || errData?.email} already exists ...
               </Error>
             )}
           </Form>
