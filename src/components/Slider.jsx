@@ -125,6 +125,12 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
+const Loading = styled.h1`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 const Slider = () => {
   // const [slideIndex, setSlideIndex] = useState(0);
   const [sliders, setSliders] = useState([]);
@@ -166,32 +172,34 @@ const Slider = () => {
   };
 
   return (
-    <Container>
-      <Arrow direction="left" onClick={prevSlide}>
-        <ArrowLeftOutlined />
-      </Arrow>
-      <Wrapper currentIndex={currentIndex}>
-        {sliders.map((item) => (
-          <Slide bg={item.bg} key={item._id}>
-            <ImgContainer>
-              {/* <NewProuduct>NEW</NewProuduct> */}
-              <NewProuductA>
-                <NewProuductB>NEW</NewProuductB>
-              </NewProuductA>
-              <Image src={item.img}></Image>
-            </ImgContainer>
-            <InfoContainer>
-              <Title>{item.title}</Title>
-              <Desc>{item.desc}</Desc>
-              {/* <Button>SHOW NOW</Button> */}
-            </InfoContainer>
-          </Slide>
-        ))}
-      </Wrapper>
-      <Arrow direction="right" onClick={nextSlide}>
-        <ArrowRightOutlined />
-      </Arrow>
-    </Container>
+    <>
+      <Container>
+        <Arrow direction="left" onClick={prevSlide}>
+          <ArrowLeftOutlined />
+        </Arrow>
+        <Wrapper currentIndex={currentIndex}>
+          {sliders.map((item) => (
+            <Slide bg={item.bg} key={item._id}>
+              <ImgContainer>
+                {/* <NewProuduct>NEW</NewProuduct> */}
+                <NewProuductA>
+                  <NewProuductB>NEW</NewProuductB>
+                </NewProuductA>
+                <Image src={item.img}></Image>
+              </ImgContainer>
+              <InfoContainer>
+                <Title>{item.title}</Title>
+                <Desc>{item.desc}</Desc>
+                {/* <Button>SHOW NOW</Button> */}
+              </InfoContainer>
+            </Slide>
+          ))}
+        </Wrapper>
+        <Arrow direction="right" onClick={nextSlide}>
+          <ArrowRightOutlined />
+        </Arrow>
+      </Container>
+    </>
   );
 };
 

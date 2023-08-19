@@ -12,7 +12,7 @@ const Container = styled.div`
 `;
 
 const Announcement = () => {
-  return <Container>Super Deal! Summer Sale Shop Now</Container>;
+  return <Container>Süper bir anlaşma! Yaz Mağazası Artık</Container>;
 };
 
 export default Announcement;

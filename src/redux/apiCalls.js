@@ -7,7 +7,12 @@ import {
 } from "./registerRedux";
 
 import axios from "axios";
-import { logoutCart } from "./cartRedux";
+import {
+  deleteProductFailure,
+  deleteProductStart,
+  deleteProductSuccess,
+  logoutCart,
+} from "./cartRedux";
 
 export const login = async (dispatch, user) => {
   dispatch(loginStart());
@@ -33,10 +38,19 @@ export const register = async (dispatch, user) => {
 };
 
 export const logOut = (dispatch) => {
+  // localStorage.removeItem("Storage");
+  // window.localStorage.clear();
   dispatch(logout());
   dispatch(logoutCart());
-  //localStorage.removeItem("Storage");
-  //window.localStorage.clear();
   //console.log(localStorage);
   //window.location.reload(false);
+};
+
+export const deleteProduct = async (id, dispatch) => {
+  dispatch(deleteProductStart());
+  try {
+    dispatch(deleteProductSuccess(id));
+  } catch (err) {
+    dispatch(deleteProductFailure());
+  }
 };

@@ -7,7 +7,7 @@ import Navbar from "../components/Navbar";
 import Newsletter from "../components/Newsletter";
 import { login, register } from "../redux/apiCalls";
 import { mobile } from "../responsive";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import validator from "validator";
 
 const Container = styled.div``;
@@ -82,6 +82,7 @@ const Register = () => {
   const { isFetching, error, errData } = useSelector((state) => state.register);
   // console.log("errData", errData);
   // const location = useLocation();
+  const navigate = useNavigate();
   const regexPattern = /^[a-zA-Z0-9_]\w{3,25}$/;
   const handleClick = (e) => {
     e.preventDefault();
@@ -114,8 +115,13 @@ const Register = () => {
       document.getElementById("passwordErrConfirm").innerHTML =
         "Password does not match ...";
     } else {
+      // navigate(
+      //   "/login"
+      //   // , { state: { username, email, password } }
+      // );
       register(dispatch, { username, email, password });
-      login(dispatch, { username, password });
+
+      //  &&login(dispatch, { username, password });
     }
   };
 

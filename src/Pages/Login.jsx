@@ -9,6 +9,7 @@ import Navbar from "../components/Navbar";
 import Newsletter from "../components/Newsletter";
 import jwt_decode from "jwt-decode";
 import { register } from "../redux/apiCalls";
+import { useLocation } from "react-router-dom";
 
 const Container = styled.div``;
 const ComponentDiv = styled.div`
@@ -77,7 +78,9 @@ const Error = styled.span`
 
 const Login = () => {
   const CLIENT_ID = process.env.REACT_APP_CLIENT;
+  const location = useLocation();
   const [username, setUsername] = useState("");
+
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const { isFetching, error } = useSelector((state) => state.user);
@@ -86,6 +89,7 @@ const Login = () => {
     e.preventDefault();
     login(dispatch, { username, password });
   };
+
   // function handleCredentialResponse(respons) {
   //   let userObject = jwt_decode(respons.credential);
   //   //console.log("respons", userObject);
@@ -129,6 +133,7 @@ const Login = () => {
               required
               placeholder="password"
               type="password"
+              // value={location.state.password}
               onChange={(e) => setPassword(e.target.value)}
             />
             <Button onClick={handleClick} disabled={isFetching}>

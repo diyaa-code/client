@@ -14,7 +14,7 @@ import Swal from "sweetalert2";
 const Container = styled.div``;
 const ComponentDiv = styled.div`
   width: 100vw;
-  height: 80vh;
+  height: 100vh;
   background: linear-gradient(
       rgba(255, 255, 255, 0.5),
       rgba(255, 255, 255, 0.5)
@@ -74,24 +74,26 @@ const Error = styled.span`
 
 const ContactUs = () => {
   const form = useRef();
+  const [email, setEmail] = useState("");
   const sendEmail = (e) => {
     e.preventDefault();
 
-    // emailjs
-    //   .sendForm(
-    //     "service_65ed8dd",
-    //     "template_g9pv63s",
-    //     form.current,
-    //     "Part4zi-OT2Jh0TKt"
-    //   )
-    //   .then(
-    //     (result) => {
-    //       console.log(result.text);
-    //     },
-    //     (error) => {
-    //       console.log(error.text);
-    //     }
-    //   );
+    emailjs
+      .sendForm(
+        "service_65ed8dd",
+        "template_g9pv63s",
+        form.current,
+        "Part4zi-OT2Jh0TKt"
+      )
+      .then(
+        (result) => {
+          console.log(result.text);
+        },
+        (error) => {
+          console.log(error.text);
+        }
+      );
+
     Swal.fire({
       position: "center",
       icon: "success",
@@ -107,36 +109,40 @@ const ContactUs = () => {
       <Navbar />
       <ComponentDiv>
         <Wrapper>
-          <Title>Conact us</Title>
+          <Title>Bize Bağlanın</Title>
           <div style={{ margin: "20px 0px " }}>
-            Say Hello! If you have any questions or queries about your order,
-            feedback on our products or website... or you just want to say Hello
-            👋 then get in touch. We'd love to hear from you!{" "}
+            Merhaba diyelim! Siparişinizle ilgili herhangi bir sorunuz veya
+            sorunuz varsa, ürünlerimizle veya web sitemizle ilgili geri
+            bildirimleriniz varsa... ya da sadece Merhaba 👋 demek istiyorsanız,
+            lütfen iletişime geçin. Sizden duymak isteriz!
           </div>
           <div>
             <form style={Form} ref={form} onSubmit={sendEmail}>
               <div>
+                <label>Kullanıcı Adı :</label>
                 <input
                   style={Input}
                   type="text"
                   name="from_name"
-                  placeholder="Name"
+                  placeholder="İsmi"
+                  required
                 />
               </div>
+              <label>E-posta adresi :</label>
               <div>
                 <input
                   style={Input}
                   type="email"
                   name="user_email"
-                  placeholder="Email"
+                  placeholder="E-posta adresi"
                   required
                 />
               </div>
-              <label>Message: </label>
+              <label>Mesajı: </label>
               <div>
                 <textarea style={Input} name="message" required />
               </div>
-              <input style={Button} type="submit" value="Send" />
+              <input style={Button} type="submit" value="Gönder" />
             </form>
           </div>
         </Wrapper>

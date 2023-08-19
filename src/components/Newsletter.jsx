@@ -99,29 +99,29 @@ const Newsletter = () => {
 
     if (!validator.isEmail(newstEmail)) {
       document.getElementById("emailErrValid").innerHTML =
-        "Please, enter valid Email...";
+        "Lütfen geçerli e-postayı girin...";
     } else {
       setSubscrib(false);
       document.getElementById("emailValid").innerHTML =
-        "Thanks for Subscribing! We'll be in touch shortly.";
+        "Abonelik için teşekkürler! Yakında iletişime geçeceğiz.";
     }
   };
   return (
     <Container>
-      <Title>SIGN UP TO OUR NEWSLETTER</Title>
+      <Title>Bilgilerimize abone olun</Title>
       {/* <Desc>Get timely updates from your favorite products.</Desc> */}
       {/* <Desc>SIGN UP TO OUR NEWSLETTER</Desc> */}
 
       <Subs>
-        Want to keep up to date with our brand new launches, wedding blogs and
-        offers? Sign up with your email here to keep in touch!
+        Yeni tanıtımlarımız, düğün bloglarımız ve tekliflerimizle güncel kalmak
+        ister misiniz? İletişimde kalmak için e-postanızı buraya yazın!
       </Subs>
 
       {subscrib && (
         <>
           <InputContainer>
             <Input
-              placeholder="Your email"
+              placeholder="E-postanız"
               onChange={(e) => setNewstEmail(e.target.value)}
             />
             <Button

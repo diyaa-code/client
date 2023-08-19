@@ -31,9 +31,9 @@ function Navbar() {
   const user = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
   const logOutUser = () => {
-    //e.preventDefault();
-    //localStorage.clear();
-    //window.location.reload(false);
+    // e.preventDefault();
+    localStorage.clear();
+    window.location.reload(false);
     logOut(dispatch);
   };
 

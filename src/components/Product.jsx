@@ -80,6 +80,8 @@ const Icon = styled.div`
 const Product = ({ item }) => {
   const [product, setProduct] = useState({});
   const [quantity, setQuantity] = useState(1);
+  const [color, setColor] = useState("");
+  const [size, setSize] = useState("");
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.currentUser);
 
@@ -88,13 +90,15 @@ const Product = ({ item }) => {
       try {
         const res = await publicRequest.get("/products/find/" + item._id);
         setProduct(res.data);
+        setColor(res.data.color[0]);
+        setSize(res.data.size[0]);
       } catch {}
     };
     getProduct();
   }, [item._id]);
 
   const handleClick = () => {
-    dispatch(addProduct({ ...product, quantity }));
+    dispatch(addProduct({ ...product, quantity, color, size }));
   };
 
   let ArrItemArr = item.imgs[0];
@@ -123,9 +127,9 @@ const Product = ({ item }) => {
             </Link>
           </Nolink>
         </Icon>
-        <Icon>
+        {/* <Icon>
           <FavoriteBorderOutlined />
-        </Icon>
+        </Icon> */}
       </Info>
     </Container>
   );

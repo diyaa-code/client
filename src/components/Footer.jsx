@@ -134,7 +134,7 @@ const Footer = () => {
         </SocialContainer>
       </Left>
       <Center>
-        <Title>Useful Links</Title>
+        <Title>Faydalı Linkler</Title>
         <List>
           <ListItem>
             <StyledLink to="/"> Home</StyledLink>
@@ -151,19 +151,19 @@ const Footer = () => {
             </StyledLink>
           </ListItem>
           <ListItem>
-            <StyledLink to="/products/woman">women Fashion</StyledLink>
+            <StyledLink to="/products/woman">Kadın Moda</StyledLink>
           </ListItem>
           <ListItem>
-            <StyledLink to="/products/kid">kids Fashion</StyledLink>
+            <StyledLink to="/products/kid">Çocuk Moda</StyledLink>
           </ListItem>
           <ListItem>
-            <StyledLink to="/products/ring">Accessories Fashion</StyledLink>
+            <StyledLink to="/products/ring">Moda Aksesuarları</StyledLink>
           </ListItem>
           <ListItem>
-            <StyledLink to="/">About us</StyledLink>
+            <StyledLink to="/">Hakkımızda</StyledLink>
           </ListItem>
           <ListItem>
-            <StyledLink to="/contactus">Contact Us</StyledLink>
+            <StyledLink to="/contactus">Bize Ulaşın</StyledLink>
           </ListItem>
           <ListItem>
             <StyledLink to="/login">Login</StyledLink>
@@ -174,7 +174,7 @@ const Footer = () => {
         </List>
       </Center>
       <Right>
-        <Title>Contact</Title>
+        <Title>İletişim</Title>
         <ContactItem>
           <Room style={{ marginRight: "10px" }} /> 622 Dixie Path , South
           Tobinchester 98336

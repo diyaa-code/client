@@ -9,6 +9,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Success from "./Pages/Success";
 import { useSelector } from "react-redux";
 import ContactUs from "./Pages/ContactUs";
+import PageNotFound from "./Pages/PageNotFound";
+import VerifyEmail from "./Pages/VerifyEmail";
 
 const App = () => {
   const user = useSelector((state) => state.user.currentUser);
@@ -21,6 +23,8 @@ const App = () => {
         <Route path="/product/:id" element={<Product />} />
         <Route path="/products/" element={<ProductList />} />
         <Route path="/contactus" element={<ContactUs />} />
+        <Route path="/verifyemail" element={<VerifyEmail />} />
+        <Route path="*" element={<PageNotFound />} />
 
         <Route
           path="/login"

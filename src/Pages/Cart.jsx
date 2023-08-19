@@ -1,5 +1,5 @@
-import { Add, Remove } from "@material-ui/icons";
-import { useSelector } from "react-redux";
+import { Add, Remove, Close as CloseBotton } from "@material-ui/icons";
+import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { userRequest } from "../requestMethods";
 //import { useHistory } from "react-router";
 import { Navigate, useNavigate } from "react-router-dom";
+import { deleteProduct } from "../redux/apiCalls";
 
 const Container = styled.div``;
 
@@ -46,7 +47,7 @@ const TopTexts = styled.div`
 `;
 const TopText = styled.span`
   text-decoration: underline;
-  cursor: pointer;
+
   margin: 0px 10px;
 `;
 
@@ -61,9 +62,11 @@ const Info = styled.div`
 `;
 
 const Product = styled.div`
+  border: 0.5px solid lightgray;
+
   display: flex;
   justify-content: space-between;
-  ${mobile({ flexDirection: "column" })}
+  ${mobile({ flexDirection: "column", position: "relative " })}
 `;
 
 const ProductDetail = styled.div`
@@ -135,7 +138,7 @@ const Summary = styled.div`
   border: 0.5px solid lightgray;
   border-radius: 10px;
   padding: 20px;
-  height: 50vh;
+  height: 45vh;
 `;
 
 const SummaryTitle = styled.h1`
@@ -160,6 +163,12 @@ const Button = styled.button`
   background-color: black;
   color: white;
   font-weight: 600;
+  cursor: pointer;
+`;
+const CloseBott = styled(CloseBotton)`
+  cursor: pointer;
+
+  ${mobile({ position: " absolute", left: "92%" })}
 `;
 
 const Cart = () => {
@@ -167,7 +176,7 @@ const Cart = () => {
 
   //console.log("good====", process.env.REACT_APP_MY_ENVIRONMENT_VARIABLE);
   const cart = useSelector((state) => state.cart);
-
+  const dispatch = useDispatch();
   const [stripeToken, setStripeToken] = useState(null);
   const history = useNavigate();
   const user = useSelector((state) => state.user.currentUser);
@@ -258,77 +267,7 @@ const Cart = () => {
             <TopText>Shopping Bag({products.length})</TopText>
             {/* <TopText>Your Wishlist (0)</TopText> */}
           </TopTexts>{" "}
-          <StripeCheckout
-            name="TAACLAND"
-            image={imga}
-            billingAddress
-            shippingAddress
-            description={`Your total is $${cart.total}`}
-            amount={cart.total * 100}
-            token={onToken}
-            stripeKey={KEY}
-          >
-            <Button>CHECKOUT NOW</Button>
-          </StripeCheckout>
-        </Top>
-        <Bottom>
-          <Info>
-            {
-              // arrProducts
-              products.map((product, index) => (
-                <Product key={index}>
-                  <ProductDetail>
-                    <Image src={product.imgs[0].img} />
-                    <Details>
-                      <ProductName>
-                        <b>Product:</b> {product.title}
-                      </ProductName>
-                      {/*<ProductId>
-                      <b>ID:</b> {product._id}
-            </ProductId>*/}
-                      <ProductColorSpan>
-                        <b>Color: </b> <ProductColor color={product.color} />
-                      </ProductColorSpan>
-                      <ProductSize>
-                        <b>Size:</b>
-
-                        {product.size ? product.size : <p>you didn't chois</p>}
-                      </ProductSize>
-                    </Details>
-                  </ProductDetail>
-                  <PriceDetail>
-                    <ProductAmountContainer>
-                      <Add />
-                      <ProductAmount>{product.quantity}</ProductAmount>
-                      <Remove />
-                    </ProductAmountContainer>
-                    <ProductPrice>
-                      $ {product.price * product.quantity}
-                    </ProductPrice>
-                  </PriceDetail>
-                </Product>
-              ))
-            }
-            <Hr />
-          </Info>
-          <Summary>
-            <SummaryTitle>ORDER SUMMARY</SummaryTitle>
-            <SummaryItem>
-              <SummaryItemText>Subtotal</SummaryItemText>
-              <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
-            </SummaryItem>
-            <SummaryItem>
-              <SummaryItemText>Estimated Shipping</SummaryItemText>
-              <SummaryItemPrice>$ 5.90</SummaryItemPrice>
-            </SummaryItem>
-            <SummaryItem>
-              <SummaryItemText>Shipping Discount</SummaryItemText>
-              <SummaryItemPrice>$ -5.90</SummaryItemPrice>
-            </SummaryItem>
-            <SummaryItem type="total">
-              <SummaryItemText>Total</SummaryItemText>
-              <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
-            </SummaryItem>
+          {products.length ? (
             <StripeCheckout
               name="TAACLAND"
               image={imga}
@@ -341,7 +280,89 @@ const Cart = () => {
             >
               <Button>CHECKOUT NOW</Button>
             </StripeCheckout>
-          </Summary>
+          ) : (
+            <></>
+          )}
+        </Top>
+        <Bottom>
+          <Info>
+            {
+              // arrProducts
+              products.map((product, index) => (
+                <Product key={index}>
+                  <ProductDetail>
+                    <Image src={product.imgs[0].img} />
+                    <Details>
+                      <ProductName>
+                        <b>Ürün: </b> {product.title}
+                      </ProductName>
+                      {/*<ProductId>
+                      <b>ID:</b> {product._id}
+            </ProductId>*/}
+                      <ProductColorSpan>
+                        <b>Renk: </b> <ProductColor color={product.color} />
+                        {product.color && <p>seçmedin</p>}
+                      </ProductColorSpan>
+                      <ProductSize>
+                        <b>Beden: </b>
+
+                        {product.size ? product.size : <p>seçmedin</p>}
+                      </ProductSize>
+                    </Details>
+                  </ProductDetail>
+                  <PriceDetail>
+                    <ProductAmountContainer>
+                      <Add />
+                      <ProductAmount>{product.quantity}</ProductAmount>
+                      <Remove />
+                    </ProductAmountContainer>
+                    <ProductPrice>
+                      {product.price * product.quantity} TL
+                    </ProductPrice>
+                  </PriceDetail>
+
+                  <CloseBott onClick={() => deleteProduct(product, dispatch)} />
+                </Product>
+              ))
+            }
+            <Hr />
+          </Info>
+
+          {products.length ? (
+            <Summary>
+              <SummaryTitle>ORDER SUMMARY</SummaryTitle>
+              <SummaryItem>
+                <SummaryItemText>Subtotal</SummaryItemText>
+                <SummaryItemPrice>{cart.total} TL</SummaryItemPrice>
+              </SummaryItem>
+              <SummaryItem>
+                <SummaryItemText>Estimated Shipping</SummaryItemText>
+                <SummaryItemPrice>10 TL</SummaryItemPrice>
+              </SummaryItem>
+              {/* <SummaryItem>
+              <SummaryItemText>Shipping Discount</SummaryItemText>
+              <SummaryItemPrice>$ -5.90</SummaryItemPrice>
+            </SummaryItem> */}
+              <SummaryItem type="total">
+                <SummaryItemText>Total</SummaryItemText>
+                <SummaryItemPrice>{cart.total + 10} TL</SummaryItemPrice>
+              </SummaryItem>
+              <StripeCheckout
+                name="TAACLAND"
+                image={imga}
+                billingAddress
+                shippingAddress
+                description={`toplamınız ${cart.total + 10} TL`}
+                amount={cart.total * 100}
+                token={onToken}
+                stripeKey={KEY}
+              >
+                <Button>CHECKOUT NOW</Button>
+              </StripeCheckout>
+            </Summary>
+          ) : (
+            <></>
+          )}
         </Bottom>
       </Wrapper>
       <Footer />
