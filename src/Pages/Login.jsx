@@ -3,13 +3,13 @@ import styled from "styled-components";
 import { login } from "../redux/apiCalls";
 import { mobile } from "../responsive";
 import { useDispatch, useSelector } from "react-redux";
-import Announcement from "../components/Announcement";
+
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import Newsletter from "../components/Newsletter";
 import jwt_decode from "jwt-decode";
-import { register } from "../redux/apiCalls";
-import { useLocation } from "react-router-dom";
+import { Visibility, VisibilityOff } from "@material-ui/icons";
+import { Link as LinkA, useLocation } from "react-router-dom";
 
 const Container = styled.div``;
 const ComponentDiv = styled.div`
@@ -35,8 +35,9 @@ const Wrapper = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 24px;
-  font-weight: 300;
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 15px;
 `;
 
 const Form = styled.form`
@@ -49,6 +50,10 @@ const Input = styled.input`
   min-width: 40%;
   margin: 10px 0;
   padding: 10px;
+
+  &[type="password"] {
+    font: 12px system-ui;
+  }
 `;
 
 const Button = styled.button`
@@ -59,15 +64,19 @@ const Button = styled.button`
   color: white;
   cursor: pointer;
   margin-bottom: 10px;
+  &:hover {
+    background-color: #004848;
+  }
   &:disabled {
     color: green;
     cursor: not-allowed;
   }
 `;
 
-const Link = styled.a`
+const LinkTo = styled(LinkA)`
   margin: 5px 0px;
   font-size: 12px;
+  color: black;
   text-decoration: underline;
   cursor: pointer;
 `;
@@ -75,12 +84,24 @@ const Link = styled.a`
 const Error = styled.span`
   color: red;
 `;
-
+const PssswordInput = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  position: relative;
+`;
+const PssswordIcon = styled.div`
+  display: flex;
+  position: absolute;
+  /* align-items: center;
+  justify-content: end; */
+  padding-right: 5px;
+`;
 const Login = () => {
   const CLIENT_ID = process.env.REACT_APP_CLIENT;
   const location = useLocation();
   const [username, setUsername] = useState("");
-
+  const [visibilityVar, setVisibilityVar] = useState(false);
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const { isFetching, error } = useSelector((state) => state.user);
@@ -116,32 +137,53 @@ const Login = () => {
   //   });
   //   // google.accounts.id.prompt();
   // }, []);
+
+  const myFunction = () => {
+    let x = document.getElementById("myInput");
+    if (x.type === "password") {
+      x.type = "text";
+      setVisibilityVar(true);
+    } else {
+      x.type = "password";
+      setVisibilityVar(false);
+    }
+  };
   return (
     <Container>
-      <Announcement />
       <Navbar />
       <ComponentDiv>
         <Wrapper>
-          <Title>SIGN IN</Title>
+          <Title>GİRİŞ YAPMAK</Title>
           <Form>
+            <label>Kullanıcı adı: </label>
             <Input
               required
-              placeholder="username"
+              placeholder="Kullanıcı adı"
               onChange={(e) => setUsername(e.target.value)}
             />
-            <Input
-              required
-              placeholder="password"
-              type="password"
-              // value={location.state.password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <label>şifre: </label>
+            <PssswordInput>
+              <Input
+                id="myInput"
+                type="password"
+                placeholder="şifre"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <PssswordIcon>
+                {visibilityVar ? (
+                  <VisibilityOff onClick={myFunction} />
+                ) : (
+                  <Visibility onClick={myFunction} />
+                )}
+              </PssswordIcon>
+            </PssswordInput>
+
             <Button onClick={handleClick} disabled={isFetching}>
               LOGIN
             </Button>
-            {error && <Error>Username or password is wrong...</Error>}
-            <Link>DO NOT YOU REMEMBER THE PASSWORD?</Link>
-            <Link>CREATE A NEW ACCOUNT</Link>
+            {error && <Error>Kullanıcı ismi veya parola yanlış...</Error>}
+            {/* <LinkTo>DO NOT YOU REMEMBER THE PASSWORD?</LinkTo> */}
+            <LinkTo to="/register">YENİ BİR HESAP OLUŞTUR</LinkTo>
           </Form>
           <div id="szignInDiv"></div>
         </Wrapper>

@@ -5,17 +5,21 @@ import CategoryItem from "./CategoryItem";
 import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
-
+import { CircularProgress } from "@material-ui/core";
 const Container = styled.div`
   display: flex;
   padding: 20px;
+  flex-wrap: wrap;
   justify-content: space-between;
   ${mobile({ padding: "0px", flexDirection: "column" })}
+`;
+const LodingIcon = styled.div`
+  margin: 100px 50%;
 `;
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const getCategory = async () => {
       try {
@@ -25,6 +29,7 @@ const Categories = () => {
         // const res = await axios.get(
         //   `https://taaclandapi.onrender.com/api/categories`
         // );
+        setLoading(false);
         setCategories(res.data);
       } catch (err) {}
     };
@@ -32,11 +37,19 @@ const Categories = () => {
   }, []);
   //console.log("categories" + categories);
   return (
-    <Container>
-      {categories.map((item) => (
-        <CategoryItem item={item} key={item._id} />
-      ))}
-    </Container>
+    <>
+      {loading ? (
+        <LodingIcon>
+          <CircularProgress size="100px" color="inherit" />
+        </LodingIcon>
+      ) : (
+        <Container>
+          {categories.map((item) => (
+            <CategoryItem item={item} key={item._id} />
+          ))}
+        </Container>
+      )}
+    </>
   );
 };
 

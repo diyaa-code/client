@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 import { mobile } from "../responsive";
 import axios from "axios";
+import { CircularProgress } from "@material-ui/core";
 
 const Container = styled.div`
   width: 100%;
@@ -12,7 +13,10 @@ const Container = styled.div`
   position: relative;
   overflow: hidden;
   /* ${mobile({ display: "none" })} */
-  ${mobile({ width: "100%", height: "40vh" })}
+  @media (max-width: 1000px) {
+    height: 60vh;
+  }
+  ${mobile({ height: "40vh" })}
 `;
 
 const Arrow = styled.div`
@@ -47,7 +51,9 @@ const Slide = styled.div`
   display: flex;
   align-items: center;
   background-color: #${(props) => props.bg};
-  ${mobile({ height: "100%" })}
+  @media (max-width: 1000px) {
+    height: 100%;
+  }
 `;
 
 const ImgContainer = styled.div`
@@ -58,6 +64,9 @@ const ImgContainer = styled.div`
 const Image = styled.img`
   height: 100%;
   /* ${mobile({ width: "100vw", height: "100%" })} */
+  @media (max-width: 1000px) {
+    width: 100%;
+  }
   ${mobile({ width: "100%" })}
 `;
 
@@ -125,10 +134,8 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
-const Loading = styled.h1`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+const LodingIcon = styled.div`
+  margin: 100px 50%;
 `;
 
 const Slider = () => {
@@ -141,7 +148,7 @@ const Slider = () => {
   //     setSlideIndex(slideIndex < 2 ? slideIndex + 1 : 0);
   //   }
   // };
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const getSlider = async () => {
       try {
@@ -149,6 +156,7 @@ const Slider = () => {
         const res = await axios.get(
           `https://nice-plum-swallow-fez.cyclic.app/api/sliders`
         );
+        setLoading(false);
         setSliders(res.data);
       } catch (err) {}
     };
@@ -173,32 +181,38 @@ const Slider = () => {
 
   return (
     <>
-      <Container>
-        <Arrow direction="left" onClick={prevSlide}>
-          <ArrowLeftOutlined />
-        </Arrow>
-        <Wrapper currentIndex={currentIndex}>
-          {sliders.map((item) => (
-            <Slide bg={item.bg} key={item._id}>
-              <ImgContainer>
-                {/* <NewProuduct>NEW</NewProuduct> */}
-                <NewProuductA>
-                  <NewProuductB>NEW</NewProuductB>
-                </NewProuductA>
-                <Image src={item.img}></Image>
-              </ImgContainer>
-              <InfoContainer>
-                <Title>{item.title}</Title>
-                <Desc>{item.desc}</Desc>
-                {/* <Button>SHOW NOW</Button> */}
-              </InfoContainer>
-            </Slide>
-          ))}
-        </Wrapper>
-        <Arrow direction="right" onClick={nextSlide}>
-          <ArrowRightOutlined />
-        </Arrow>
-      </Container>
+      {loading ? (
+        <LodingIcon>
+          <CircularProgress size="100px" color="inherit" />
+        </LodingIcon>
+      ) : (
+        <Container>
+          <Arrow direction="left" onClick={prevSlide}>
+            <ArrowLeftOutlined />
+          </Arrow>
+          <Wrapper currentIndex={currentIndex}>
+            {sliders.map((item) => (
+              <Slide bg={item.bg} key={item._id}>
+                <ImgContainer>
+                  {/* <NewProuduct>NEW</NewProuduct> */}
+                  <NewProuductA>
+                    <NewProuductB>NEW</NewProuductB>
+                  </NewProuductA>
+                  <Image src={item?.img}></Image>
+                </ImgContainer>
+                <InfoContainer>
+                  <Title>{item.title}</Title>
+                  <Desc>{item.desc}</Desc>
+                  {/* <Button>SHOW NOW</Button> */}
+                </InfoContainer>
+              </Slide>
+            ))}
+          </Wrapper>
+          <Arrow direction="right" onClick={nextSlide}>
+            <ArrowRightOutlined />
+          </Arrow>
+        </Container>
+      )}
     </>
   );
 };

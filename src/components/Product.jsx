@@ -1,14 +1,5 @@
-import {
-  FavoriteBorderOutlined,
-  SearchOutlined,
-  ShoppingCartOutlined,
-} from "@material-ui/icons";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { addProduct } from "../redux/cartRedux";
-import { publicRequest } from "../requestMethods";
 
 const Info = styled.div`
   opacity: 0;
@@ -41,12 +32,6 @@ const Container = styled.div`
     opacity: 1;
   }
 `;
-const Nolink = styled.div`
-  a {
-    text-decoration: none;
-    color: black;
-  }
-`;
 
 const Circle = styled.div`
   width: 200px;
@@ -61,76 +46,17 @@ const Image = styled.img`
   z-index: 2;
 `;
 
-const Icon = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 10px;
-  transition: all 0.5s ease;
-  &:hover {
-    background-color: #e9f5f5;
-    transform: scale(1.1);
-  }
-`;
-
 const Product = ({ item }) => {
-  const [product, setProduct] = useState({});
-  const [quantity, setQuantity] = useState(1);
-  const [color, setColor] = useState("");
-  const [size, setSize] = useState("");
-  const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.currentUser);
+  let ArrItemArr = item?.imgs[0];
 
-  useEffect(() => {
-    const getProduct = async () => {
-      try {
-        const res = await publicRequest.get("/products/find/" + item._id);
-        setProduct(res.data);
-        setColor(res.data.color[0]);
-        setSize(res.data.size[0]);
-      } catch {}
-    };
-    getProduct();
-  }, [item._id]);
-
-  const handleClick = () => {
-    dispatch(addProduct({ ...product, quantity, color, size }));
-  };
-
-  let ArrItemArr = item.imgs[0];
-  //console.log(ArrItemArr.img);
-  let ArrItem = ArrItemArr.img;
+  let ArrItem = ArrItemArr?.img;
   return (
     <Container>
       <Circle />
       <Image src={ArrItem} />
-      <Info>
-        <Icon>
-          {user ? (
-            <ShoppingCartOutlined onClick={handleClick} />
-          ) : (
-            <Nolink>
-              <Link to={`/login`}>
-                <ShoppingCartOutlined />
-              </Link>
-            </Nolink>
-          )}
-        </Icon>
-        <Icon>
-          <Nolink>
-            <Link to={`/product/${item._id}`}>
-              <SearchOutlined />
-            </Link>
-          </Nolink>
-        </Icon>
-        {/* <Icon>
-          <FavoriteBorderOutlined />
-        </Icon> */}
-      </Info>
+      <Link to={`/product/${item._id}`}>
+        <Info></Info>
+      </Link>
     </Container>
   );
 };

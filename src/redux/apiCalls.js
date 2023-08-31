@@ -13,6 +13,7 @@ import {
   deleteProductSuccess,
   logoutCart,
 } from "./cartRedux";
+import Swal from "sweetalert2";
 
 export const login = async (dispatch, user) => {
   dispatch(loginStart());
@@ -31,6 +32,9 @@ export const register = async (dispatch, user) => {
     const res = await publicRequest.post("/auth/register", user);
     //const res = await axios.post("http://localhost:5000/api/auth/register");
     // console.log("apiCalls", res.data);
+    Swal.fire(
+      "E-posta hesabınıza bir onay mesajı gönderdik. Lütfen e-postanıza gidin ve hesabı onaylayın"
+    );
     dispatch(registerSuccess(res.data));
   } catch (err) {
     dispatch(registerFailure(err?.response?.data?.keyValue));
@@ -41,7 +45,7 @@ export const logOut = (dispatch) => {
   // localStorage.removeItem("Storage");
   // window.localStorage.clear();
   dispatch(logout());
-  dispatch(logoutCart());
+  // dispatch(logoutCart());
   //console.log(localStorage);
   //window.location.reload(false);
 };

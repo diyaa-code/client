@@ -1,4 +1,9 @@
-import { Add, Remove, Close as CloseBotton } from "@material-ui/icons";
+import {
+  Add,
+  Remove,
+  LocalMallOutlined,
+  Close as CloseBotton,
+} from "@material-ui/icons";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import Announcement from "../components/Announcement";
@@ -9,9 +14,11 @@ import { mobile } from "../responsive";
 import StripeCheckout from "react-stripe-checkout";
 import { useEffect, useState } from "react";
 import { userRequest } from "../requestMethods";
-//import { useHistory } from "react-router";
-import { Navigate, useNavigate } from "react-router-dom";
+
+import { Link, useNavigate } from "react-router-dom";
 import { deleteProduct } from "../redux/apiCalls";
+import Newsletter from "../components/Newsletter";
+import Swal from "sweetalert2";
 
 const Container = styled.div``;
 
@@ -170,11 +177,27 @@ const CloseBott = styled(CloseBotton)`
 
   ${mobile({ position: " absolute", left: "92%" })}
 `;
+const ButtonLogin = styled.button`
+  width: 25%;
+  border: none;
+  padding: 15px 20px;
+  background-color: teal;
+  color: white;
+  cursor: pointer;
+  margin-top: 20px;
+  &:hover {
+    background-color: #025b5b;
+  }
+`;
 
+const Error = styled.span`
+  color: red;
+  font-weight: 500;
+  font-size: 15px;
+`;
 const Cart = () => {
   const KEY = process.env.REACT_APP_PUB_KEY_STRIPE;
 
-  //console.log("good====", process.env.REACT_APP_MY_ENVIRONMENT_VARIABLE);
   const cart = useSelector((state) => state.cart);
   const dispatch = useDispatch();
   const [stripeToken, setStripeToken] = useState(null);
@@ -184,8 +207,7 @@ const Cart = () => {
 
   const [arrProducts, setArrProducts] = useState([]);
 
-  // console.log("user", user);
-  let userId;
+  let userId = "";
   if (user) {
     userId = user._id;
   }
@@ -194,8 +216,6 @@ const Cart = () => {
     setStripeToken(token);
   };
 
-  //console.log(stripeToken);
-
   useEffect(() => {
     const makeRequest = async () => {
       try {
@@ -203,7 +223,7 @@ const Cart = () => {
           tokenId: stripeToken.id,
           amount: cart.total * 100,
         });
-        //console.log("res", res.data);
+
         const res2 = await userRequest.post("/orders", {
           userId: userId,
           products: cart.products.map((item) => ({
@@ -214,81 +234,98 @@ const Cart = () => {
           amount: cart.total,
           address: res.data.billing_details.address,
         });
-        //console.log("res2", res2.data._id);
+
         history("/success", { state: res2.data._id });
-      } catch {}
+      } catch {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Bir şeyler yanlış gitti!",
+        });
+      }
     };
     stripeToken && cart.total >= 1 && makeRequest();
   }, [stripeToken, cart.total, history]);
 
-  // useEffect(() => {
-  //   const addProductToBDCart = async () => {
-  //     if (!products.length == 0) {
-  //       try {
-  //         const res = await userRequest.post("/carts/", {
-  //           userId,
-  //           products,
-  //         });
-  //       } catch {}
-  //     } else {
-  //       console.log("amty");
-  //     }
-  //   };
-  //   addProductToBDCart();
-  // }, [products]);
-
-  // useEffect(() => {
-  //   const getCart = async () => {
-  //     try {
-  //       const res = await userRequest.get("/carts/find/" + userId);
-  //       setArrProducts(res.data.products);
-  //     } catch {}
-  //   };
-  //   getCart();
-  // }, []);
-  // console.log("arr", arrProducts);
   return (
     <Container>
-      {/* {user ? (
-        <> */}
-      <Announcement />
       <Navbar />
+      {user && !user.isVerified && <Announcement />}
       <Wrapper>
-        <Title>YOUR BAG</Title>
+        <Title>SENİN ÇANTAN</Title>
+        <Error
+          style={{ position: "absolute", left: "auto", right: "0%" }}
+          id="loginErr"
+        ></Error>
         <Top>
           <TopButton
             onClick={() => {
               history("/home");
             }}
           >
-            CONTINUE SHOPPING
+            ALIŞVERİŞE DEVAM
           </TopButton>
           <TopTexts>
-            <TopText>Shopping Bag({products.length})</TopText>
-            {/* <TopText>Your Wishlist (0)</TopText> */}
+            <TopText>Alışveriş çantası({products.length})</TopText>
           </TopTexts>{" "}
-          {products.length ? (
-            <StripeCheckout
-              name="TAACLAND"
-              image={imga}
-              billingAddress
-              shippingAddress
-              description={`Your total is $${cart.total}`}
-              amount={cart.total * 100}
-              token={onToken}
-              stripeKey={KEY}
-            >
-              <Button>CHECKOUT NOW</Button>
-            </StripeCheckout>
+          {user ? (
+            <>
+              {products.length ? (
+                <StripeCheckout
+                  name="TAACLAND"
+                  image={imga}
+                  billingAddress
+                  shippingAddress
+                  description={`toplamınız ${cart.total + 10} TL`}
+                  amount={(cart.total + 10) * 100}
+                  currency="TRY"
+                  token={onToken}
+                  stripeKey={KEY}
+                >
+                  <Button>ŞİMDİ ÖDEME YAP</Button>
+                </StripeCheckout>
+              ) : (
+                <></>
+              )}
+            </>
           ) : (
-            <></>
+            <div>
+              {products.length > 0 ? (
+                <Button
+                  onClick={() => {
+                    document.getElementById(
+                      "loginErr"
+                    ).innerHTML = `Bu işlemi tamamlamak için <a href="/login">buradan</a> giriş yapmalısınız.
+                    
+                  `;
+                    Swal.fire({
+                      title:
+                        "Satın alma işlemini tamamlamak için giriş yapmalısınız.",
+                      text: "Giriş yapmak düğmesine tıklayın.",
+                      icon: "warning",
+                      showCancelButton: true,
+                      confirmButtonColor: "#3085d6",
+                      cancelButtonColor: "#d33",
+                      confirmButtonText: "giriş yapmak",
+                      cancelButtonText: "iptal etmek",
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        history("/login");
+                      }
+                    });
+                  }}
+                >
+                  ŞİMDİ ÖDEME YAP
+                </Button>
+              ) : null}
+            </div>
           )}
         </Top>
-        <Bottom>
-          <Info>
-            {
-              // arrProducts
-              products.map((product, index) => (
+
+        {products.length ? (
+          <Bottom>
+            <Info>
+              {products.map((product, index) => (
                 <Product key={index}>
                   <ProductDetail>
                     <Image src={product.imgs[0].img} />
@@ -296,12 +333,9 @@ const Cart = () => {
                       <ProductName>
                         <b>Ürün: </b> {product.title}
                       </ProductName>
-                      {/*<ProductId>
-                      <b>ID:</b> {product._id}
-            </ProductId>*/}
+
                       <ProductColorSpan>
                         <b>Renk: </b> <ProductColor color={product.color} />
-                        {product.color && <p>seçmedin</p>}
                       </ProductColorSpan>
                       <ProductSize>
                         <b>Beden: </b>
@@ -323,16 +357,14 @@ const Cart = () => {
 
                   <CloseBott onClick={() => deleteProduct(product, dispatch)} />
                 </Product>
-              ))
-            }
-            <Hr />
-          </Info>
+              ))}
+              <Hr />
+            </Info>
 
-          {products.length ? (
             <Summary>
-              <SummaryTitle>ORDER SUMMARY</SummaryTitle>
+              <SummaryTitle>SİPARİŞ ÖZETİ</SummaryTitle>
               <SummaryItem>
-                <SummaryItemText>Subtotal</SummaryItemText>
+                <SummaryItemText>Ara toplam</SummaryItemText>
                 <SummaryItemPrice>{cart.total} TL</SummaryItemPrice>
               </SummaryItem>
               <SummaryItem>
@@ -347,31 +379,82 @@ const Cart = () => {
                 <SummaryItemText>Total</SummaryItemText>
                 <SummaryItemPrice>{cart.total + 10} TL</SummaryItemPrice>
               </SummaryItem>
-              <StripeCheckout
-                name="TAACLAND"
-                image={imga}
-                billingAddress
-                shippingAddress
-                description={`toplamınız ${cart.total + 10} TL`}
-                amount={cart.total * 100}
-                token={onToken}
-                stripeKey={KEY}
-              >
-                <Button>CHECKOUT NOW</Button>
-              </StripeCheckout>
+              {user ? (
+                <>
+                  {products.length ? (
+                    <StripeCheckout
+                      name="TAACLAND"
+                      image={imga}
+                      billingAddress
+                      shippingAddress
+                      description={`toplamınız ${cart.total + 10} TL`}
+                      amount={(cart.total + 10) * 100}
+                      currency="TRY"
+                      token={onToken}
+                      stripeKey={KEY}
+                    >
+                      <Button>ŞİMDİ ÖDEME YAP</Button>
+                    </StripeCheckout>
+                  ) : (
+                    <></>
+                  )}
+                </>
+              ) : (
+                <Button
+                  onClick={() => {
+                    document.getElementById(
+                      "loginErr2"
+                    ).innerHTML = `Bu işlemi tamamlamak için <a href="/login">buradan</a> giriş yapmalısınız.
+                    
+                  `;
+                    Swal.fire({
+                      title:
+                        "Satın alma işlemini tamamlamak için giriş yapmalısınız.",
+                      text: "Giriş yapmak düğmesine tıklayın.",
+                      icon: "warning",
+                      showCancelButton: true,
+                      confirmButtonColor: "#3085d6",
+                      cancelButtonColor: "#d33",
+                      confirmButtonText: "giriş yapmak",
+                      cancelButtonText: "iptal etmek",
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        history("/login");
+                      }
+                    });
+                  }}
+                >
+                  ŞİMDİ ÖDEME YAP
+                </Button>
+              )}
+              <Error id="loginErr2"></Error>
             </Summary>
-          ) : (
-            <></>
-          )}
-        </Bottom>
+          </Bottom>
+        ) : (
+          <>
+            <SummaryTitle
+              style={{
+                textAlign: "center ",
+                margin: "100px",
+                fontSize: "25px",
+              }}
+            >
+              <LocalMallOutlined></LocalMallOutlined>
+              <div>çantan boş</div>
+              {!user && (
+                <>
+                  <div>giriş yapmak ve alışverişe başlayın!</div>
+                  <ButtonLogin onClick={() => history("/login")}>
+                    giriş yapmak
+                  </ButtonLogin>
+                </>
+              )}
+            </SummaryTitle>
+          </>
+        )}
       </Wrapper>
+      <Newsletter />
       <Footer />
-      {/* </>
-      ) : (
-        <>
-          <Navigate replace to="/login" />
-        </>
-      )} */}
     </Container>
   );
 };

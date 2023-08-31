@@ -3,7 +3,6 @@ import styled from "styled-components";
 
 import { mobile } from "../responsive";
 
-import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import Newsletter from "../components/Newsletter";
@@ -14,12 +13,11 @@ import Swal from "sweetalert2";
 const Container = styled.div``;
 const ComponentDiv = styled.div`
   width: 100vw;
-  height: 100vh;
+  height: 80vh;
   background: linear-gradient(
       rgba(255, 255, 255, 0.5),
       rgba(255, 255, 255, 0.5)
     ),
-    // url("https://images.pexels.com/photos/6984650/pexels-photo-6984650.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940")
     center;
   background-color: #f5fafd;
   background-size: cover;
@@ -30,13 +28,14 @@ const ComponentDiv = styled.div`
 const Wrapper = styled.div`
   width: 70vh;
   padding: 20px;
-  // background-color: white;
+
   ${mobile({ width: "75%" })}
 `;
 
 const Title = styled.h1`
-  font-size: 24px;
-  font-weight: 300;
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 15px;
 `;
 
 const Form = {
@@ -97,15 +96,15 @@ const ContactUs = () => {
     Swal.fire({
       position: "center",
       icon: "success",
-      title: "Your message was sent successfully",
+      title: "Mesajınız başarıyla gönderildi",
       showConfirmButton: false,
       timer: 1500,
     });
     e.target.reset();
   };
+
   return (
     <Container>
-      <Announcement />
       <Navbar />
       <ComponentDiv>
         <Wrapper>
@@ -142,7 +141,21 @@ const ContactUs = () => {
               <div>
                 <textarea style={Input} name="message" required />
               </div>
-              <input style={Button} type="submit" value="Gönder" />
+
+              <input
+                onMouseOver={() =>
+                  (document.getElementById("gfg").style.backgroundColor =
+                    "#004848")
+                }
+                onMouseOut={() =>
+                  (document.getElementById("gfg").style.backgroundColor =
+                    "teal")
+                }
+                id="gfg"
+                style={Button}
+                type="submit"
+                value="Gönder"
+              />
             </form>
           </div>
         </Wrapper>

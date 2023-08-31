@@ -6,6 +6,11 @@ import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import { CircularProgress } from "@material-ui/core";
 
 import styled from "styled-components";
+import Navbar from "../components/Navbar";
+import Newsletter from "../components/Newsletter";
+import Footer from "../components/Footer";
+import { logout } from "../redux/userRedux";
+import { useDispatch } from "react-redux";
 
 const MagTag = styled.div`
   margin: 50px;
@@ -21,6 +26,15 @@ const Mag = styled.span`
   margin-left: 10px;
   vertical-align: middle;
 `;
+const Container = styled.div`
+  height: 50vh;
+  background: linear-gradient(
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0.5)
+    ),
+    center;
+  background-color: #f5fafd;
+`;
 
 const TrueMag = styled.span``;
 
@@ -29,7 +43,7 @@ function VerifyEmail() {
   const history = useNavigate();
   const [isLoding, setIsLoding] = useState(false);
   const emailToken = searchParams.get("emailToken");
-
+  const dispatch = useDispatch();
   const [errMsg, setErrMsg] = useState("");
   useEffect(() => {
     (async () => {
@@ -39,9 +53,9 @@ function VerifyEmail() {
           const response = await publicRequest.post("/auth/verifyemail", {
             emailToken,
           });
-          console.log("verifyemail good", response.data.username);
+          dispatch(logout());
         } catch (err) {
-          setErrMsg("email verification failed, invalid toklen!");
+          setErrMsg("E-posta doğrulaması başarısız oldu, geçersiz jeton!");
         }
         setIsLoding(false);
       } else {
@@ -51,59 +65,64 @@ function VerifyEmail() {
   }, [emailToken]);
   return (
     <div>
-      {isLoding ? (
-        <MagTag style={{ backgroundColor: "rgba(0, 255, 17, 0.146)" }}>
-          <CircularProgress
-            size="1rem"
-            style={{
-              color: "green",
-              verticalAlign: "middle",
-              marginLeft: "5px",
-            }}
-          />
-        </MagTag>
-      ) : (
-        <div>
-          {!errMsg ? (
-            <MagTag style={{ backgroundColor: "rgba(255, 0, 47, 0.2)" }}>
-              <ErrorOutlineIcon
-                style={{
-                  color: "red",
-                  verticalAlign: "middle",
-                  marginLeft: "5px",
-                }}
-              />
-
-              <Mag>{errMsg}</Mag>
-            </MagTag>
-          ) : (
-            <MagTag style={{ backgroundColor: "rgba(0, 255, 17, 0.146)" }}>
-              <TrueMag>
-                <CheckCircleIcon
+      <Navbar />
+      <Container>
+        {isLoding ? (
+          <MagTag style={{ backgroundColor: "rgba(0, 255, 17, 0.146)" }}>
+            <CircularProgress
+              size="1rem"
+              style={{
+                color: "green",
+                verticalAlign: "middle",
+                marginLeft: "5px",
+              }}
+            />
+          </MagTag>
+        ) : (
+          <div>
+            {errMsg ? (
+              <MagTag style={{ backgroundColor: "rgba(255, 0, 47, 0.2)" }}>
+                <ErrorOutlineIcon
                   style={{
-                    color: "green",
+                    color: "red",
                     verticalAlign: "middle",
                     marginLeft: "5px",
                   }}
                 />
-                <Mag>
-                  The email verification process has been completed
-                  successfully. You can now log in using the link
-                </Mag>
-                <Link
-                  to="/login"
-                  style={{
-                    verticalAlign: "middle",
-                    marginLeft: "5px",
-                  }}
-                >
-                  here
-                </Link>
-              </TrueMag>
-            </MagTag>
-          )}
-        </div>
-      )}
+
+                <Mag>{errMsg}</Mag>
+              </MagTag>
+            ) : (
+              <MagTag style={{ backgroundColor: "rgba(0, 255, 17, 0.146)" }}>
+                <TrueMag>
+                  <CheckCircleIcon
+                    style={{
+                      color: "green",
+                      verticalAlign: "middle",
+                      marginLeft: "5px",
+                    }}
+                  />
+                  <Mag>
+                    E-posta doğrulama işlemi başarıyla tamamlandı. Artık
+                    bağlantıyı kullanarak giriş yapabilirsiniz
+                  </Mag>
+                  <Link
+                    to="/login"
+                    style={{
+                      verticalAlign: "middle",
+                      marginLeft: "5px",
+                    }}
+                  >
+                    Burada
+                  </Link>
+                </TrueMag>
+              </MagTag>
+            )}
+          </div>
+        )}
+      </Container>
+      <Newsletter />
+      <Footer />
     </div>
   );
 }

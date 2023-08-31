@@ -1,40 +1,42 @@
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@material-ui/icons";
 import { Add, Remove } from "@material-ui/icons";
 import styled from "styled-components";
-import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import Newsletter from "../components/Newsletter";
 import { mobile } from "../responsive";
 import { useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { publicRequest, userRequest } from "../requestMethods";
 import { addProduct } from "../redux/cartRedux";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import CreatableSelect from "react-select";
 import chroma from "chroma-js";
-
+import CircularProgress from "@material-ui/core/CircularProgress";
 const Container = styled.div``;
 
 const WrapperGlo = styled.div`
   background-color: #f5fafd;
   padding: 50px;
   display: flex;
-  /* flex-wrap: wrap; */
-  /* flex-direction: column; */
-
-  ${mobile({ padding: "10px", flexDirection: "column" })}
+  @media (max-width: 700px) {
+    flex-direction: column;
+    padding: 10px;
+  }
 `;
 
 const InfoContainer = styled.div`
   flex: 1;
   padding: 0px 50px;
-  ${mobile({ padding: "10px" })}
+
+  @media (max-width: 700px) {
+    padding: 10px;
+  }
 `;
 
 const Title = styled.h1`
-  font-weight: 200;
+  font-weight: 400;
 `;
 
 const Desc = styled.p`
@@ -42,14 +44,17 @@ const Desc = styled.p`
 `;
 
 const Price = styled.span`
-  font-weight: 100;
+  font-weight: 150;
   font-size: 40px;
 `;
 
 const FilterContainer = styled.div`
   width: 50%;
   margin: 30px 0px;
-  ${mobile({ width: "100%" })}
+
+  @media (max-width: 700px) {
+    width: 100%;
+  }
 `;
 
 const Filter = styled.div`
@@ -80,7 +85,10 @@ const AddContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  ${mobile({ width: "100%" })}
+
+  @media (max-width: 700px) {
+    width: 100%;
+  }
 `;
 
 const AmountContainer = styled.div`
@@ -135,39 +143,51 @@ const Arrow = styled.div`
 `;
 
 const ImgContainer = styled.div`
-  flex: 1;
   overflow: hidden;
-  width: 43vw;
+  flex: 1;
   height: 85vh;
   position: relative;
-
-  //padding: 0px 50px;
-  ${mobile({ height: "100%", width: "100%" })}
-`;
-
-const Image = styled.img`
-  width: 43vw;
-  height: 85vh;
-
   display: flex;
-
-  ${mobile({ height: "100%", width: "100vw" })};
+  align-items: center;
+  justify-content: center;
 `;
 
 const Wrapper = styled.div`
   display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
   transition: all 1.5s ease;
+
   transform: translateX(${(props) => props.currentIndex * -100}%);
+
+  @media (max-width: 700px) {
+    height: 50vh;
+    width: 100%;
+  }
 `;
 
-const Slide = styled.div`
-  border-radius: 2rem;
-  //display: flex;
-  height: 100vh;
+const Image = styled.img`
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
   width: 100%;
-  ${mobile({ height: "40vh", width: "100%" })};
+  height: 85vh;
+  flex-shrink: 0;
+
+  @media (max-width: 700px) {
+    height: 100%;
+  }
 `;
 
+const Error = styled.span`
+  color: red;
+  font-weight: 400;
+  font-size: 18px;
+`;
+
+const LodingIcon = styled.div`
+  margin: 100px 50%;
+`;
 const Product = () => {
   const location = useLocation();
   const id = location.pathname.split("/")[2];
@@ -176,19 +196,22 @@ const Product = () => {
   const [count, setcount] = useState(0);
   const [color, setColor] = useState("");
   const [size, setSize] = useState("");
-
+  const inputRef = useRef();
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.currentUser);
 
-  // let userId;
-  // if (user) {
-  //   userId = user._id;
-  // }
-  ///const productId = id;
-  //console.log(userId);
-  //const { products } = useSelector((state) => state.cart);
-  //const cart = useSelector((state) => state.cart);
+  const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const getProduct = async () => {
+      try {
+        const res = await publicRequest.get("/products/find/" + id);
+        setLoading(false);
+        setProduct(res.data);
+      } catch {}
+    };
+    getProduct();
+  }, [id]);
 
   const prevSlide = () => {
     const isFirstSlide = currentIndex === 0;
@@ -201,17 +224,6 @@ const Product = () => {
     const newIndex = isLastSlide ? 0 : currentIndex + 1;
     setCurrentIndex(newIndex);
   };
-
-  useEffect(() => {
-    const getProduct = async () => {
-      try {
-        const res = await publicRequest.get("/products/find/" + id);
-        setProduct(res.data);
-      } catch {}
-    };
-    getProduct();
-  }, [id]);
-
   const handleQuantity = (type) => {
     if (type === "dec") {
       quantity > 1 && setQuantity(quantity - 1);
@@ -222,49 +234,16 @@ const Product = () => {
 
   const handleClick = (e) => {
     e.preventDefault();
-    dispatch(addProduct({ ...product, quantity, color, size }));
-    setcount(count + 1);
-    // const ProductId = product._id;
-    // console.log(ProductId);
-
-    // try {
-    //   const res = await userRequest.post("/cart", {
-    //     userId: userId,
-    //     products: cart.products.map((item) => ({
-    //       productId: item._id,
-    //       quantity: item.quantity,
-    //     })),
-    //   });
-    // } catch {
-    //   console.log("err");
-    // }
+    if (!color) {
+      document.getElementById("nameErr").innerHTML = "renk seç...";
+      inputRef.current.focus();
+    } else if (!size) {
+      document.getElementById("size").innerHTML = "boyut seç...";
+    } else {
+      dispatch(addProduct({ ...product, quantity, color, size }));
+      setcount(count + 1);
+    }
   };
-
-  // useEffect(() => {
-  //   const addProductCartBD = async () => {
-  //     try {
-  //       if (count) {
-  //         //await userRequest.delete("/carts/delete/" + userId);
-  //         const userCart = await userRequest.get("/carts/find/" + userId);
-  //         if (userCart.data) {
-  //           const res = await userRequest.put("/carts/" + userCart.data._id, {
-  //             products: { ...product, quantity, color, size },
-  //           });
-  //         } else {
-  //           const res2 = await userRequest.post("/carts", {
-  //             userId: userId,
-  //             products: { ...product, quantity, color, size },
-  //             // products: cart.products.map((item) => ({
-  //             //   productId: item._id,
-  //             //   quantity: item.quantity,
-  //             // })),
-  //           });
-  //         }
-  //       }
-  //     } catch {}
-  //   };
-  //   addProductCartBD();
-  // }, [count]);
 
   const dot = (color = "transparent") => ({
     alignItems: "center",
@@ -340,84 +319,82 @@ const Product = () => {
   var imgs = product.imgs ? product.imgs : 1;
   return (
     <Container>
-      <Announcement />
       <Navbar />
-      <WrapperGlo>
-        <ImgContainer>
-          {imgs.length > 1 && (
-            <Arrow direction="left" onClick={prevSlide}>
-              <ArrowLeftOutlined />
-            </Arrow>
-          )}
-          <Wrapper currentIndex={currentIndex}>
-            {product.imgs &&
-              product.imgs.map((item) => (
-                <Slide key={item._id}>
-                  <Image src={item.img} />
-                </Slide>
+      {loading ? (
+        <LodingIcon>
+          <CircularProgress size="100px" color="inherit" />
+        </LodingIcon>
+      ) : (
+        <WrapperGlo>
+          <ImgContainer>
+            {imgs.length > 1 && (
+              <Arrow direction="left" onClick={prevSlide}>
+                <ArrowLeftOutlined />
+              </Arrow>
+            )}
+            <Wrapper currentIndex={currentIndex}>
+              {product?.imgs?.map((item, index) => (
+                <Image key={index} src={item?.img}></Image>
               ))}
-          </Wrapper>
-          {/* {console.log("product lenghth", imgs.length)}
-          {console.log("currentIndexh", currentIndex)} */}
+            </Wrapper>
 
-          {imgs.length > 1 && (
-            <Arrow direction="right" onClick={nextSlide}>
-              <ArrowRightOutlined />
-            </Arrow>
-          )}
+            {imgs.length > 1 && (
+              <Arrow direction="right" onClick={nextSlide}>
+                <ArrowRightOutlined />
+              </Arrow>
+            )}
+          </ImgContainer>
 
-          {/* <Image src={product.img} /> */}
-          {/* <video width="100%" height="100%" controls>
-            <source src={product.img} type="video/mp4" />
-          </video> */}
-        </ImgContainer>
-        <InfoContainer>
-          <Title>{product.title}</Title>
-          <Desc>{product.desc}</Desc>
-          <Price>{product.price} TL</Price>
-          <FilterContainer>
-            <Filter>
-              <FilterTitle>Color</FilterTitle>
-              <StylesColor>
-                <CreatableSelect
-                  options={optionsColor}
-                  styles={colorStyles}
-                  onChange={(selectedOption, actionMeta) => {
-                    setColor(selectedOption.value);
-                  }}
-                />
-              </StylesColor>
-            </Filter>
-
-            <Filter>
-              <FilterTitle>Size</FilterTitle>
-              <StylesSize>
-                <CreatableSelect
-                  options={optionsSize}
-                  styles={colorStylesSize}
-                  onChange={(selectedOption, actionMeta) => {
-                    setSize(selectedOption.value);
-                  }}
-                />
-              </StylesSize>
-            </Filter>
-          </FilterContainer>
-          <AddContainer>
-            <AmountContainer>
-              <Remove onClick={() => handleQuantity("dec")} />
-              <Amount>{quantity}</Amount>
-              <Add onClick={() => handleQuantity("inc")} />
-            </AmountContainer>
-            {user ? (
+          <InfoContainer>
+            <Title>{product.title}</Title>
+            <Desc>{product.desc}</Desc>
+            <Price>{product.price} TL</Price>
+            <FilterContainer>
+              <Filter>
+                <FilterTitle>renk</FilterTitle>
+                <StylesColor>
+                  <CreatableSelect
+                    ref={inputRef}
+                    options={optionsColor}
+                    styles={colorStyles}
+                    onChange={(selectedOption, actionMeta) => {
+                      setColor(selectedOption.value);
+                    }}
+                  />
+                </StylesColor>
+              </Filter>
+              {!color && <Error id="nameErr"></Error>}
+              <Filter>
+                <FilterTitle>boyut</FilterTitle>
+                <StylesSize>
+                  <CreatableSelect
+                    options={optionsSize}
+                    styles={colorStylesSize}
+                    onChange={(selectedOption, actionMeta) => {
+                      setSize(selectedOption.value);
+                    }}
+                  />
+                </StylesSize>
+              </Filter>
+              {!size && <Error id="size"></Error>}
+            </FilterContainer>
+            <AddContainer>
+              <AmountContainer>
+                <Remove onClick={() => handleQuantity("dec")} />
+                <Amount>{quantity}</Amount>
+                <Add onClick={() => handleQuantity("inc")} />
+              </AmountContainer>
+              {/* {user ? ( */}
               <Button onClick={handleClick}>ADD TO CART</Button>
-            ) : (
+              {/* ) : (
               <Link to={`/login`}>
                 <Button>ADD TO CART</Button>
               </Link>
-            )}
-          </AddContainer>
-        </InfoContainer>
-      </WrapperGlo>
+            )} */}
+            </AddContainer>
+          </InfoContainer>
+        </WrapperGlo>
+      )}
       <Newsletter />
       <Footer />
     </Container>

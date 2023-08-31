@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Badge } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import "./Navbar.css";
-import { GiRocketThruster } from "react-icons/gi";
+
 import { FaBars, FaTimes } from "react-icons/fa";
 import { IconContext } from "react-icons/lib";
 import { NavLink } from "react-router-dom";
@@ -12,7 +12,8 @@ import logg from "../image/Capture33.png";
 import {
   Search,
   ShoppingCartOutlined,
-  PersonOutlineOutlined,
+  Person,
+  ExitToApp,
 } from "@material-ui/icons";
 import { logOut } from "../redux/apiCalls";
 
@@ -43,10 +44,9 @@ function Navbar() {
         <nav className="navbar">
           <div className="navbar-container container">
             <Link to="/home" className="navbar-logo" onClick={closeMobileMenu}>
-              {/* <GiRocketThruster className="navbar-icon" />
-              Skye */}
               <Image src={logg} />
             </Link>
+
             <div className="menu-icon" onClick={handleClick}>
               {click ? <FaTimes /> : <FaBars />}
             </div>
@@ -59,52 +59,71 @@ function Navbar() {
                   }
                   onClick={closeMobileMenu}
                 >
-                  Home
+                  Ana sayfa
                 </NavLink>
               </li>
-              {!user ? (
-                <>
-                  <li className="nav-item">
+
+              <li>
+                <div className=" dropdown">
+                  <button className=" dropbtn">
+                    <Person />
+                    <i className="fa fa-caret-down"></i>
+                  </button>
+
+                  <div className="dropdown-content">
+                    {!user ? (
+                      <>
+                        <NavLink
+                          to="/login"
+                          className={({ isActive }) =>
+                            "nav-links" + (isActive ? " activated" : "")
+                          }
+                        >
+                          Giriş yapmak
+                        </NavLink>
+                        <NavLink
+                          to="/register"
+                          className={({ isActive }) =>
+                            "nav-links" + (isActive ? " activated" : "")
+                          }
+                        >
+                          Bir hesap oluşturun
+                        </NavLink>
+                      </>
+                    ) : (
+                      <NavLink
+                        to="/myAccount"
+                        className={({ isActive }) =>
+                          "nav-links" + (isActive ? " activated" : "")
+                        }
+                      >
+                        Hesabım
+                      </NavLink>
+                    )}
+
                     <NavLink
-                      to="/login"
+                      to="/contactus"
                       className={({ isActive }) =>
                         "nav-links" + (isActive ? " activated" : "")
                       }
-                      onClick={closeMobileMenu}
                     >
-                      Signin
+                      Bize Bağlanın
                     </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink
-                      to="/register"
-                      className={({ isActive }) =>
-                        "nav-links" + (isActive ? " activated" : "")
-                      }
-                      onClick={closeMobileMenu}
-                    >
-                      Register
-                    </NavLink>
-                  </li>
-                </>
-              ) : (
-                <>
-                  <li className="nav-item">
-                    <NavLink
-                      to="/login"
-                      className={({ isActive }) =>
-                        "nav-links" + (isActive ? " activated" : "")
-                      }
-                      onClick={() => {
-                        closeMobileMenu();
-                        logOutUser();
-                      }}
-                    >
-                      Logout
-                    </NavLink>
-                  </li>
-                </>
-              )}
+                    {user && (
+                      <NavLink
+                        style={{ display: "flex", alignItems: "center" }}
+                        onClick={() => {
+                          closeMobileMenu();
+                          logOutUser();
+                        }}
+                      >
+                        <ExitToApp />
+                        Çıkış Yap
+                      </NavLink>
+                    )}
+                  </div>
+                </div>
+              </li>
               <li className="nav-item">
                 <NavLink
                   to="/cart"

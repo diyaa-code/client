@@ -1,9 +1,52 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router";
-import { userRequest } from "../requestMethods";
-import { Link } from "react-router-dom";
 
+import Navbar from "../components/Navbar";
+import Newsletter from "../components/Newsletter";
+import Footer from "../components/Footer";
+import { mobile } from "../responsive";
+import styled from "styled-components";
+import { Instagram } from "@material-ui/icons";
+
+const Container = styled.div`
+  width: 100vw;
+  height: 60vh;
+  background: linear-gradient(
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0.5)
+    ),
+    center;
+  background-color: #f5fafd;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Wrapper = styled.div`
+  width: 70vh;
+  padding: 20px;
+
+  //background-color: white;
+  ${mobile({ width: "75%" })}
+`;
+
+const Masse = styled.div`
+  height: 100vh;
+  display: flex;
+  font-size: larger;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Nolink = styled.a`
+  margin-top: 20px;
+  text-decoration: none;
+  color: black;
+  display: flex;
+`;
 const Success = () => {
   const location = useLocation();
   const data = location.state;
@@ -36,22 +79,46 @@ const Success = () => {
   }, [/*cart,*/ data, currentUser]);
   //console.log("orderId", orderId);
   return (
-    <div
-      style={{
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      {orderId
-        ? `Order has been created successfully. Your order number is ${orderId}`
-        : `Successfull. Your order is being prepared...`}
-      <Link to={`/login`}>
-        <button style={{ padding: 10, marginTop: 20 }}>Go to Homepage</button>
-      </Link>
-    </div>
+    <>
+      <Navbar />
+      <Container>
+        <Wrapper>
+          <Masse>
+            {orderId ? (
+              <>
+                <p>
+                  <span style={{ color: "green" }}>
+                    {" "}
+                    Sipariş başarıyla oluşturuldu.
+                  </span>{" "}
+                  sıra numaranız{" "}
+                  <span style={{ fontWeight: "500" }}>{orderId}</span>
+                </p>
+                <p style={{ marginTop: "20px" }}>
+                  Herhangi bir soruşturma varsa, e-posta adresimizden bize
+                  ulaşın
+                  <span style={{ fontWeight: "500" }}>
+                    {" "}
+                    taacland63@gmail.com{" "}
+                  </span>
+                </p>
+
+                <Nolink
+                  href="https://www.instagram.com/taacland/"
+                  target="_blank"
+                >
+                  Veya: <Instagram />
+                </Nolink>
+              </>
+            ) : (
+              `Successfull. Your order is being prepared...`
+            )}
+          </Masse>
+        </Wrapper>
+      </Container>
+      <Newsletter />
+      <Footer />
+    </>
   );
 };
 

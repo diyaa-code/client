@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import Announcement from "../components/Announcement";
+
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import Newsletter from "../components/Newsletter";
@@ -9,16 +9,14 @@ import { login, register } from "../redux/apiCalls";
 import { mobile } from "../responsive";
 import { useLocation, useNavigate } from "react-router-dom";
 import validator from "validator";
-
+import { Visibility, VisibilityOff } from "@material-ui/icons";
 const Container = styled.div``;
 const ComponentDiv = styled.div`
-  width: 100vw;
-  height: 80vh;
+  height: 100%;
   background: linear-gradient(
       rgba(255, 255, 255, 0.5),
       rgba(255, 255, 255, 0.5)
     ),
-    // url("https://images.pexels.com/photos/6984650/pexels-photo-6984650.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940")
     center;
   background-color: #f5fafd;
   background-size: cover;
@@ -36,8 +34,9 @@ const Wrapper = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 24px;
-  font-weight: 300;
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 15px;
 `;
 
 const Form = styled.form`
@@ -50,6 +49,23 @@ const Input = styled.input`
   min-width: 40%;
   margin: 10px 0;
   padding: 10px;
+
+  &[type="password"] {
+    font: 12px system-ui;
+  }
+`;
+const PssswordInput = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  position: relative;
+`;
+const PssswordIcon = styled.div`
+  display: flex;
+  position: absolute;
+  /* align-items: center; */
+  /* justify-content: end; */
+  padding-right: 5px;
 `;
 
 const Agreement = styled.span`
@@ -58,13 +74,15 @@ const Agreement = styled.span`
 `;
 
 const Button = styled.button`
-  width: 40%;
+  width: 170px;
   border: none;
   padding: 15px 20px;
   background-color: teal;
   color: white;
   cursor: pointer;
-
+  &:hover {
+    background-color: #004848;
+  }
   &:disabled {
     color: green;
     cursor: not-allowed;
@@ -78,6 +96,7 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [passwordConf, setPasswordConf] = useState("");
   const [email, setEmail] = useState("");
+  const [visibilityVar, setVisibilityVar] = useState(false);
   const dispatch = useDispatch();
   const { isFetching, error, errData } = useSelector((state) => state.register);
   // console.log("errData", errData);
@@ -88,18 +107,18 @@ const Register = () => {
     e.preventDefault();
 
     if (!username) {
-      document.getElementById("nameErr").innerHTML = "Enter your username...";
+      document.getElementById("nameErr").innerHTML =
+        "Kullanıcı adınızı giriniz...";
     } else if (!email) {
-      document.getElementById("emailErr").innerHTML = "Enter your email...";
+      document.getElementById("emailErr").innerHTML = "E-postanızı giriniz...";
     } else if (!password) {
-      document.getElementById("passwordErr").innerHTML =
-        "Enter your password...";
+      document.getElementById("passwordErr").innerHTML = "Şifrenizi girin...";
     } else if (!regexPattern.test(username)) {
       document.getElementById("nameErr").innerHTML =
-        "Username must be between 3 and 25 characters....";
+        "Kullanıcı adı 3 ila 25 karakter arasında olmalıdır....";
     } else if (!validator.isEmail(email)) {
       document.getElementById("emailErrValid").innerHTML =
-        "Please, enter valid Email...";
+        "Lütfen geçerli bir e-posta girin...";
     } else if (
       !validator.isStrongPassword(password, {
         minLength: 8,
@@ -113,7 +132,7 @@ const Register = () => {
         "Passwords must be eight characters long, and include at least one number...";
     } else if (!(passwordConf === password)) {
       document.getElementById("passwordErrConfirm").innerHTML =
-        "Password does not match ...";
+        "Parola eşleşmiyor ...";
     } else {
       // navigate(
       //   "/login"
@@ -124,34 +143,55 @@ const Register = () => {
       //  &&login(dispatch, { username, password });
     }
   };
-
+  const myFunction = () => {
+    let x = document.getElementById("myInput");
+    if (x.type === "password") {
+      x.type = "text";
+      setVisibilityVar(true);
+    } else {
+      x.type = "password";
+      setVisibilityVar(false);
+    }
+  };
   return (
     <Container>
-      <Announcement />
       <Navbar />
       <ComponentDiv>
         <Wrapper>
-          <Title>CREATE AN ACCOUNT</Title>
+          <Title>BİR HESAP OLUŞTURUN</Title>
           <Form>
+            <label>kullanıcı adı:</label>
             <Input
-              placeholder="username"
+              placeholder="kullanıcı adı"
               onChange={(e) => setUsername(e.target.value)}
             />
             {(!username || !regexPattern.test(username)) && (
               <Error id="nameErr"></Error>
             )}
+            <label>e-posta:</label>
             <Input
-              placeholder="email"
+              placeholder="e-posta"
               // value={location.state ? location.state.email : ""}
               onChange={(e) => setEmail(e.target.value)}
             />
             {!email && <Error id="emailErr"></Error>}
             {!validator.isEmail(email) && <Error id="emailErrValid"></Error>}
-            <Input
-              type="password"
-              placeholder="password"
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <label>şifre:</label>
+            <PssswordInput>
+              <Input
+                id="myInput"
+                type="password"
+                placeholder="şifre"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <PssswordIcon>
+                {visibilityVar ? (
+                  <VisibilityOff onClick={myFunction} />
+                ) : (
+                  <Visibility onClick={myFunction} />
+                )}
+              </PssswordIcon>
+            </PssswordInput>
             {(!password ||
               !validator.isStrongPassword(password, {
                 minLength: 8,
@@ -160,25 +200,28 @@ const Register = () => {
                 minNumbers: 1,
                 minSymbols: 0,
               })) && <Error id="passwordErr"></Error>}
+            <label>Şifreyi Onayla</label>
             <Input
               type="password"
-              placeholder="confirm password"
+              placeholder="Şifreyi Onayla"
               onChange={(e) => setPasswordConf(e.target.value)}
             />
             {!(passwordConf === password) && (
               <Error id="passwordErrConfirm"></Error>
             )}
             <Agreement>
-              By creating an account, I consent to the processing of my personal
-              data in accordance with the <b>PRIVACY POLICY</b>
+              Bir hesap oluşturarak kişisel verilerimin işlenmesine izin
+              veriyorum verilere uygun olarak <b>GİZLİLİK POLİTİKASI</b>
             </Agreement>
             <Button onClick={handleClick} disabled={isFetching}>
-              CREATE
+              YARATMAK
             </Button>
             {error && (
               <Error>
                 {" "}
-                {errData?.username || errData?.email} already exists ...
+                {/* {errData?.username || errData?.email} already exists ... */}
+                Bu bilgi zaten mevcut.<br></br>
+                Yeni bir hesap oluşturmak istiyorsanız bu bilgiyi değiştirin
               </Error>
             )}
           </Form>

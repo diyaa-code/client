@@ -7,7 +7,9 @@ import Products from "../components/Products";
 import Newsletter from "../components/Newsletter";
 import Footer from "../components/Footer";
 import { Helmet } from "react-helmet-async";
+import { useSelector } from "react-redux";
 const Home = () => {
+  const user = useSelector((state) => state?.user?.currentUser);
   return (
     <div>
       <Helmet>
@@ -17,8 +19,9 @@ const Home = () => {
           content="Taacland A store of the finest headbands for adults, teenagers, and young children"
         />
       </Helmet>
-      {/* <Announcement /> */}
+
       <Navbar />
+      {user && !user.isVerified && <Announcement />}
       <Slider />
       <Categories />
       <Products />

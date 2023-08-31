@@ -1,16 +1,19 @@
 import {
-  Facebook,
+  // Facebook,
   Instagram,
   Email,
-  Phone,
-  Pinterest,
+  // Phone,
+  // Pinterest,
   Room,
-  Twitter,
+  // Twitter,
 } from "@material-ui/icons";
 import { Link, NavLink } from "react-router-dom";
 import styled from "styled-components";
 import { mobile } from "../responsive";
 import logg from "../image/Capture33Looka.PNG";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 const Container = styled.div`
   display: flex;
@@ -101,8 +104,29 @@ const StyledLink = styled(NavLink)`
 
 const Image = styled.img`
   width: 300px;
+  @media (max-width: 350px) {
+    width: 200px;
+  }
 `;
 const Footer = () => {
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const getCategory = async () => {
+      try {
+        const res = await axios.get(
+          `https://nice-plum-swallow-fez.cyclic.app/api/categories`
+        );
+        // const res = await axios.get(
+        //   `https://taaclandapi.onrender.com/api/categories`
+        // );
+        setLoading(false);
+        setCategories(res.data);
+      } catch (err) {}
+    };
+    getCategory();
+  }, []);
+  const user = useSelector((state) => state?.user?.currentUser);
   return (
     <Container>
       <Left>
@@ -137,7 +161,7 @@ const Footer = () => {
         <Title>Faydalı Linkler</Title>
         <List>
           <ListItem>
-            <StyledLink to="/"> Home</StyledLink>
+            <StyledLink to="/">Ana sayfa</StyledLink>
           </ListItem>
           <ListItem>
             <StyledLink
@@ -147,48 +171,62 @@ const Footer = () => {
               //   background: isActive ? "#7600dc" : "#f0f0f0",
               // })}
             >
-              Cart
+              Alışveriş çantası
             </StyledLink>
           </ListItem>
-          <ListItem>
-            <StyledLink to="/products/woman">Kadın Moda</StyledLink>
-          </ListItem>
-          <ListItem>
+          {categories.map((item, index) => (
+            <ListItem key={index}>
+              <StyledLink to={`/products/${item?.cat}`}>
+                {item?.cat} kategorisi
+              </StyledLink>
+            </ListItem>
+          ))}
+          {/* <ListItem>
             <StyledLink to="/products/kid">Çocuk Moda</StyledLink>
           </ListItem>
           <ListItem>
             <StyledLink to="/products/ring">Moda Aksesuarları</StyledLink>
-          </ListItem>
+          </ListItem> */}
           <ListItem>
-            <StyledLink to="/">Hakkımızda</StyledLink>
+            <StyledLink to="/abutus">Hakkımızda</StyledLink>
           </ListItem>
           <ListItem>
             <StyledLink to="/contactus">Bize Ulaşın</StyledLink>
           </ListItem>
-          <ListItem>
-            <StyledLink to="/login">Login</StyledLink>
-          </ListItem>
-          <ListItem>
-            <StyledLink to="/register">Sing up</StyledLink>
-          </ListItem>
+          {!user && (
+            <>
+              <ListItem>
+                <StyledLink to="/login">Giriş yapmak</StyledLink>
+              </ListItem>
+              <ListItem>
+                <StyledLink to="/register">Bir hesap oluşturun </StyledLink>
+              </ListItem>
+            </>
+          )}
         </List>
       </Center>
       <Right>
         <Title>İletişim</Title>
         <ContactItem>
-          <Room style={{ marginRight: "10px" }} /> 622 Dixie Path , South
-          Tobinchester 98336
+          <Room style={{ marginRight: "10px" }} /> 📍The Land of Legends
         </ContactItem>
         <ContactItem>
+          <Room style={{ marginRight: "10px" }} /> 📍Marriott Hotel Boulevard
+        </ContactItem>
+        <ContactItem>
+          <Room style={{ marginRight: "10px" }} /> Atölye Adres:Kadriye
+          mah.Süleyman demirel cad. No9/3 iç kapı No:5 Belek/Antalya
+        </ContactItem>
+        {/* <ContactItem>
           <Phone style={{ marginRight: "10px" }} /> Yurtdışı sipariş 0551 056 11
           56
         </ContactItem>
         <ContactItem>
           <Phone style={{ marginRight: "10px" }} /> Yurtiçi sipariş 0546 423 44
           12
-        </ContactItem>
+        </ContactItem> */}
         <ContactItem>
-          <Email style={{ marginRight: "10px" }} /> TAACLAND@TAACLAND.dev
+          <Email style={{ marginRight: "10px" }} /> taacland63@gmail.com
         </ContactItem>
         <Payment src="https://i.ibb.co/Qfvn4z6/payment.png" />
       </Right>
