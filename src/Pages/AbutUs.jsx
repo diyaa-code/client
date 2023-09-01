@@ -52,13 +52,15 @@ const AbutUs = () => {
   useEffect(() => {
     const getAboutAu = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/aboutUs");
-        // const res = await userRequest.get(
-        //   `https://nice-plum-swallow-fez.cyclic.app/api/AboutUs/${id}`
-        // );
+        // const res = await axios.get("http://localhost:5000/api/aboutUs");
+        const res = await axios.get(
+          `https://nice-plum-swallow-fez.cyclic.app/api/aboutUs`
+        );
         setLoading(false);
         setAboutUs(res.data);
-      } catch (err) {}
+      } catch (err) {
+        setLoading(false);
+      }
     };
     getAboutAu();
   }, []);

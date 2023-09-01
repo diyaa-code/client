@@ -61,7 +61,10 @@ const TopText = styled.span`
 const Bottom = styled.div`
   display: flex;
   justify-content: space-between;
-  ${mobile({ flexDirection: "column" })}
+
+  @media (max-width: 650px) {
+    flex-direction: column;
+  }
 `;
 
 const Info = styled.div`
@@ -79,6 +82,9 @@ const Product = styled.div`
 const ProductDetail = styled.div`
   flex: 2;
   display: flex;
+  @media (max-width: 350px) {
+    flex-wrap: wrap;
+  }
 `;
 
 const Image = styled.img`
@@ -88,6 +94,7 @@ const Image = styled.img`
 const Details = styled.div`
   padding: 20px;
   display: flex;
+
   flex-direction: column;
   justify-content: space-around;
 `;
@@ -151,7 +158,12 @@ const Summary = styled.div`
 const SummaryTitle = styled.h1`
   font-weight: 200;
 `;
-
+const NoUser = styled.h1`
+  font-weight: 200;
+  text-align: center;
+  margin: 100px auto;
+  font-size: 25px;
+`;
 const SummaryItem = styled.div`
   margin: 30px 0px;
   display: flex;
@@ -178,7 +190,6 @@ const CloseBott = styled(CloseBotton)`
   ${mobile({ position: " absolute", left: "92%" })}
 `;
 const ButtonLogin = styled.button`
-  width: 25%;
   border: none;
   padding: 15px 20px;
   background-color: teal;
@@ -432,13 +443,7 @@ const Cart = () => {
           </Bottom>
         ) : (
           <>
-            <SummaryTitle
-              style={{
-                textAlign: "center ",
-                margin: "100px",
-                fontSize: "25px",
-              }}
-            >
+            <NoUser>
               <LocalMallOutlined></LocalMallOutlined>
               <div>çantan boş</div>
               {!user && (
@@ -449,7 +454,7 @@ const Cart = () => {
                   </ButtonLogin>
                 </>
               )}
-            </SummaryTitle>
+            </NoUser>
           </>
         )}
       </Wrapper>

@@ -13,6 +13,7 @@ import AbutUs from "./Pages/AbutUs";
 import PageNotFound from "./Pages/PageNotFound";
 import VerifyEmail from "./Pages/VerifyEmail";
 import MyAccount from "./Pages/MyAccount";
+import Orders from "./Pages/Orders";
 
 const App = () => {
   const user = useSelector((state) => state.user.currentUser);
@@ -42,6 +43,10 @@ const App = () => {
         <Route
           path="/myAccount"
           element={user ? <MyAccount /> : <Navigate replace to="/home" />}
+        />
+        <Route
+          path="/orders"
+          element={user ? <Orders /> : <Navigate replace to="/home" />}
         />
         {/* <Route
           path="/cart"

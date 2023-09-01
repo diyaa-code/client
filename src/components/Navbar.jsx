@@ -91,14 +91,24 @@ function Navbar() {
                         </NavLink>
                       </>
                     ) : (
-                      <NavLink
-                        to="/myAccount"
-                        className={({ isActive }) =>
-                          "nav-links" + (isActive ? " activated" : "")
-                        }
-                      >
-                        Hesabım
-                      </NavLink>
+                      <>
+                        <NavLink
+                          to="/myAccount"
+                          className={({ isActive }) =>
+                            "nav-links" + (isActive ? " activated" : "")
+                          }
+                        >
+                          Hesabım
+                        </NavLink>
+                        <NavLink
+                          to="/orders"
+                          className={({ isActive }) =>
+                            "nav-links" + (isActive ? " activated" : "")
+                          }
+                        >
+                          Emirler
+                        </NavLink>
+                      </>
                     )}
 
                     <NavLink
